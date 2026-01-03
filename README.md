@@ -22,9 +22,12 @@ A Contract Lifecycle Management (CLM) platform backend built with Django, Supaba
 
 ### Render.com Deployment
 
-1. **Environment Variables** (set these as secrets in Render):
+#### Option 1: Using Render.yaml (Recommended)
+1. **Connect your GitHub repository** to Render
+2. **Render will automatically detect** the `render.yaml` configuration
+3. **Set Environment Secrets** in Render dashboard:
    - `DJANGO_SECRET_KEY`: Your Django secret key
-   - `JWT_SECRET_KEY`: Your JWT secret key
+   - `JWT_SECRET_KEY`: Your JWT secret key  
    - `DB_NAME`: postgres
    - `DB_USER`: Your Supabase database user
    - `DB_PASSWORD`: Your Supabase database password
@@ -34,11 +37,42 @@ A Contract Lifecycle Management (CLM) platform backend built with Django, Supaba
    - `SUPABASE_ANON_KEY`: Your Supabase anonymous key
    - `SUPABASE_SERVICE_ROLE_KEY`: Your Supabase service role key
 
-2. **Deploy Options**:
-   - Use `render.yaml` for automated deployment
-   - Or use `build.sh` + `Procfile` for manual configuration
+#### Option 2: Manual Configuration in Render Dashboard
+If `render.yaml` doesn't work, configure manually:
 
-3. **Start Command**: `gunicorn clm_backend.wsgi:application --bind 0.0.0.0:$PORT`
+**Build Command:**
+```
+pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate
+```
+
+**Start Command:**
+```
+gunicorn app:app --bind 0.0.0.0:$PORT
+```
+
+**Environment Variables:**
+- `DJANGO_SETTINGS_MODULE`: `clm_backend.settings`
+- `PYTHON_VERSION`: `3.10.13`
+- All the secrets listed above
+
+### Local Development
+
+1. **Install dependencies:**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+2. **Set environment variables** (copy from `.env.example` to `.env` and fill in values)
+
+3. **Run migrations:**
+   ```bash
+   python manage.py migrate
+   ```
+
+4. **Start server:**
+   ```bash
+   python manage.py runserver
+   ```
 
 ## 🏗️ Architecture
 

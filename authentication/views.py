@@ -184,7 +184,7 @@ class ForgotPasswordView(APIView):
         # Generate reset token
         reset_token = secrets.token_urlsafe(32)
         user.reset_token = reset_token
-        user.reset_token_expires = timezone.now() + timedelta(hours=1)
+        user.reset_token_expiry = timezone.now() + timedelta(hours=1)
         user.save()
         
         # In production, send email with reset link
@@ -233,7 +233,7 @@ class ResetPasswordView(APIView):
         try:
             user = User.objects.get(
                 reset_token=token,
-                reset_token_expires__gt=timezone.now(),
+                reset_token_expiry__gt=timezone.now(),
                 is_active=True
             )
         except User.DoesNotExist:
@@ -245,7 +245,7 @@ class ResetPasswordView(APIView):
         # Update password
         user.set_password(new_password)
         user.reset_token = None
-        user.reset_token_expires = None
+        user.reset_token_expiry = None
         user.save()
         
         return Response({

@@ -10,8 +10,11 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
+from django.db import transaction
 from django.shortcuts import get_object_or_404
 import uuid
+import hashlib
 
 from .models import (
     Contract, ContractVersion, ContractTemplate, Clause, 
@@ -24,6 +27,7 @@ from .serializers import (
     ContractGenerateSerializer, ContractApproveSerializer
 )
 from .services import ContractGenerator, RuleEngine
+from authentication.r2_service import R2StorageService
 
 
 class ContractTemplateViewSet(viewsets.ReadOnlyModelViewSet):
@@ -128,6 +132,7 @@ class ContractViewSet(viewsets.ModelViewSet):
     API endpoint for contracts with generation, approval, and version management
     """
     permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
     
     def get_serializer_class(self):
         if self.action == 'retrieve':
@@ -148,6 +153,92 @@ class ContractViewSet(viewsets.ModelViewSet):
             tenant_id=self.request.user.tenant_id,
             created_by=self.request.user.user_id
         )
+
+    def create(self, request, *args, **kwargs):
+        """Create contract.
+
+        Supports multipart form uploads with a `file` field. If a file is provided,
+        it is uploaded to Cloudflare R2 and stored as the initial ContractVersion.
+        """
+        uploaded_file = request.FILES.get('file')
+
+        allowed_fields = [
+            'title',
+            'contract_type',
+            'status',
+            'value',
+            'counterparty',
+            'start_date',
+            'end_date',
+        ]
+        payload = {k: request.data.get(k) for k in allowed_fields if k in request.data}
+
+        serializer = self.get_serializer(data=payload)
+        serializer.is_valid(raise_exception=True)
+
+        with transaction.atomic():
+            contract = serializer.save(
+                tenant_id=request.user.tenant_id,
+                created_by=request.user.user_id,
+            )
+
+            if uploaded_file:
+                file_bytes = uploaded_file.read()
+                try:
+                    uploaded_file.seek(0)
+                except Exception:
+                    pass
+
+                file_hash = hashlib.sha256(file_bytes).hexdigest()
+                file_size = getattr(uploaded_file, 'size', None)
+
+                r2_service = R2StorageService()
+                r2_key = r2_service.upload_file(uploaded_file, request.user.tenant_id, uploaded_file.name)
+
+                template_id = contract.template_id or uuid.uuid4()
+                template_version = getattr(contract.template, 'version', None) or 1
+
+                ContractVersion.objects.create(
+                    contract=contract,
+                    version_number=1,
+                    r2_key=r2_key,
+                    template_id=template_id,
+                    template_version=template_version,
+                    change_summary='Initial document upload',
+                    created_by=request.user.user_id,
+                    file_size=file_size,
+                    file_hash=file_hash,
+                )
+
+                contract.current_version = 1
+                contract.save(update_fields=['current_version'])
+
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    @action(detail=True, methods=['get'], url_path='download-url')
+    def download_url(self, request, pk=None):
+        """GET /contracts/{id}/download-url/
+
+        Returns a presigned URL for the latest uploaded/generated document.
+        """
+        contract = self.get_object()
+        try:
+            latest_version = contract.versions.latest('version_number')
+        except ContractVersion.DoesNotExist:
+            return Response(
+                {'error': 'No document available for this contract'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        r2_service = R2StorageService()
+        url = r2_service.generate_presigned_url(latest_version.r2_key)
+        return Response({
+            'contract_id': str(contract.id),
+            'version_number': latest_version.version_number,
+            'r2_key': latest_version.r2_key,
+            'download_url': url,
+        })
     
     @action(detail=False, methods=['get'], url_path='statistics')
     def statistics(self, request):

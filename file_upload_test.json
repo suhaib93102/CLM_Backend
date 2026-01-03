@@ -1,0 +1,41 @@
+{
+  "timestamp": "2026-01-03T18:30:09.232506",
+  "method": "POST",
+  "endpoint": "/api/contracts/",
+  "description": "File upload test with .txt file and authentication",
+  "status_code": 201,
+  "response_time": 2.070488,
+  "headers": {
+    "Date": "Sat, 03 Jan 2026 13:00:09 GMT",
+    "Content-Type": "application/json",
+    "Transfer-Encoding": "chunked",
+    "Connection": "keep-alive",
+    "CF-RAY": "9b82ad614edf16e3-DEL",
+    "allow": "GET, POST, HEAD, OPTIONS",
+    "cross-origin-opener-policy": "same-origin",
+    "referrer-policy": "same-origin",
+    "rndr-id": "4ec259a0-8638-469a",
+    "vary": "Accept, origin, Accept-Encoding",
+    "x-content-type-options": "nosniff",
+    "x-frame-options": "DENY",
+    "x-render-origin-server": "gunicorn",
+    "cf-cache-status": "DYNAMIC",
+    "Server": "cloudflare",
+    "alt-svc": "h3=\":443\"; ma=86400"
+  },
+  "test_file_content": "CONTRACT AGREEMENT\n\nThis is a test contract document created for API testing purposes.\n\nPARTIES:\n1. ...",
+  "response_json": {
+    "id": "7338c653-158d-47c2-98cd-d2896f886460",
+    "tenant_id": "f22ca049-c5de-4773-8a60-a0cf56e5aae3",
+    "title": "Test Contract Upload",
+    "contract_type": null,
+    "status": "draft",
+    "value": null,
+    "counterparty": null,
+    "start_date": null,
+    "end_date": null,
+    "created_by": "a82f70cb-039e-46a3-9a09-f445410304f5",
+    "created_at": "2026-01-03T13:00:08.988423Z",
+    "updated_at": "2026-01-03T13:00:08.988441Z"
+  }
+}

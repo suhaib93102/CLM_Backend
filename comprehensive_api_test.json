@@ -1,0 +1,105 @@
+{
+  "test_metadata": {
+    "base_url": "https://clm-backend-hfsi.onrender.com",
+    "test_time": "2026-01-03T18:26:45.240922",
+    "total_endpoints_tested": 10,
+    "authenticated_endpoints_tested": 5
+  },
+  "summary": {
+    "public_endpoints_working": [
+      "POST /api/auth/forgot-password/"
+    ],
+    "authentication_required": [
+      "GET /api/auth/me/",
+      "GET /api/contract-templates/",
+      "GET /api/clauses/",
+      "GET /api/contracts/",
+      "GET /api/generation-jobs/",
+      "POST /api/contracts/ (file upload)"
+    ],
+    "registration_status": "User already exists (test@example.com)",
+    "authentication_flow": "Working"
+  },
+  "authenticated_tests": [
+    {
+      "endpoint": "/api/auth/me/",
+      "method": "GET",
+      "description": "Current user info",
+      "status_code": 200,
+      "authenticated": true,
+      "response": {
+        "user_id": "93e49181-6b36-46e4-9303-7563aae820d4",
+        "email": "test_1767444989@example.com",
+        "tenant_id": "f4c13545-177a-45ff-ac67-d65dae8a29b5",
+        "is_staff": false
+      }
+    },
+    {
+      "endpoint": "/api/contract-templates/",
+      "method": "GET",
+      "description": "Contract templates",
+      "status_code": 200,
+      "authenticated": true,
+      "response": {
+        "count": 0,
+        "next": null,
+        "previous": null,
+        "results": []
+      }
+    },
+    {
+      "endpoint": "/api/clauses/",
+      "method": "GET",
+      "description": "Clauses",
+      "status_code": 200,
+      "authenticated": true,
+      "response": {
+        "count": 0,
+        "next": null,
+        "previous": null,
+        "results": []
+      }
+    },
+    {
+      "endpoint": "/api/contracts/",
+      "method": "GET",
+      "description": "Contracts",
+      "status_code": 200,
+      "authenticated": true,
+      "response": {
+        "count": 0,
+        "next": null,
+        "previous": null,
+        "results": []
+      }
+    },
+    {
+      "endpoint": "/api/generation-jobs/",
+      "method": "GET",
+      "description": "Generation jobs",
+      "status_code": 200,
+      "authenticated": true,
+      "response": {
+        "count": 0,
+        "next": null,
+        "previous": null,
+        "results": []
+      }
+    }
+  ],
+  "file_upload_test": {
+    "endpoint": "/api/contracts/",
+    "method": "POST",
+    "description": "File upload with authentication",
+    "status_code": null,
+    "note": "Requires valid authentication token to test",
+    "test_file_content": "This is a test contract document for API testing."
+  },
+  "recommendations": [
+    "1. Use unique email for registration testing",
+    "2. Implement proper authentication token handling",
+    "3. Test file upload with valid contract creation payload",
+    "4. Add more comprehensive error handling tests",
+    "5. Test contract creation, update, and deletion endpoints"
+  ]
+}

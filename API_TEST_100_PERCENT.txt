@@ -1,0 +1,1862 @@
+====================================================================================================
+COMPREHENSIVE TEST - ALL ENDPOINTS WITH REAL VALUES
+Generated: January 12, 2026
+====================================================================================================
+
+====================================================================================================
+SECTION 1: AUTHENTICATION
+====================================================================================================
+
+====================================================================================================
+✓ POST /api/auth/register/ [201]
+Description: User registration with real credentials
+
+Request:
+{
+  "email": "test100percent@api.com",
+  "password": "TestPassword123!@#$",
+  "full_name": "100 Percent Test User"
+}
+
+Response:
+{
+  "access": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY4Mjg4NDI0LCJpYXQiOjE3NjgyMDIwMjQsImp0aSI6IjVhNmUxM2MzOWY5ODQ3MDFiODYwOTY3ZGMyNWEwNDI5IiwidXNlcl9pZCI6IjkxZTk0Mzc0LTI5ZDItNDlkZS04ZGM3LTc2MzgyOTkxZDRhZiJ9.8gVl-_Z2ZQyLvDktHWJ_Si8cmWcN5nYO85YluSW6rLI",
+  "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc2ODgwNjgyNCwiaWF0IjoxNzY4MjAyMDI0LCJqdGkiOiIzOTNiYzZhY2NlNmE0MjY1OGY5MzZlYWMyMDExMWJhNSIsInVzZXJfaWQiOiI5MWU5NDM3NC0yOWQyLTQ5ZGUtOGRjNy03NjM4Mjk5MWQ0YWYifQ.Yb4dxbSD8u9zVWcXwCcTSZBHbkw3t87MBFvlhvT6OiY",
+  "user": {
+    "user_id": "91e94374-29d2-49de-8dc7-76382991d4af",
+    "email": "test100percent@api.com"
+  }
+}
+
+
+====================================================================================================
+✓ POST /api/auth/login/ [200]
+Description: User login
+
+Request:
+{
+  "email": "test100percent@api.com",
+  "password": "TestPassword123!@#$"
+}
+
+Response:
+{
+  "access": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY4Mjg4NDI0LCJpYXQiOjE3NjgyMDIwMjQsImp0aSI6ImFmYzdjZGI2ZmE2ZjQ4NmM4ZTFjYzgxZDQwNGQ3Njc4IiwidXNlcl9pZCI6IjkxZTk0Mzc0LTI5ZDItNDlkZS04ZGM3LTc2MzgyOTkxZDRhZiJ9.l5vZb3Zc9A2MFQltZEKMJYodYq4A4tzPEPimEElrytI",
+  "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc2ODgwNjgyNCwiaWF0IjoxNzY4MjAyMDI0LCJqdGkiOiJlMmNkNTE1M2M1N2Y0YTAwYTQwMzlhNzJiMjZmODVmNCIsInVzZXJfaWQiOiI5MWU5NDM3NC0yOWQyLTQ5ZGUtOGRjNy03NjM4Mjk5MWQ0YWYifQ.SSsliNGFpqOtf0r7neqzjJF9bkkec3pgnqEilRqJSi4",
+  "user": {
+    "user_id": "91e94374-29d2-49de-8dc7-76382991d4af",
+    "email": "test100percent@api.com",
+    "tenant_id": "b4eab3c3-dcd4-4ff3-888b-0a564e39ce20"
+  }
+}
+
+
+====================================================================================================
+✓ GET /api/auth/me/ [200]
+Description: Get current user info
+
+Response:
+{
+  "user_id": "91e94374-29d2-49de-8dc7-76382991d4af",
+  "email": "test100percent@api.com",
+  "tenant_id": "b4eab3c3-dcd4-4ff3-888b-0a564e39ce20"
+}
+
+
+====================================================================================================
+✓ POST /api/auth/refresh/ [200]
+Description: Refresh JWT token
+
+Request:
+{
+  "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc2ODgwNjgyNCwiaWF0IjoxNzY4MjAyMDI0LCJqdGkiOiIzOTNiYzZhY2NlNmE0MjY1OGY5MzZlYWMyMDExMWJhNSIsInVzZXJfaWQiOiI5MWU5NDM3NC0yOWQyLTQ5ZGUtOGRjNy03NjM4Mjk5MWQ0YWYifQ.Yb4dxbSD8u9zVWcXwCcTSZBHbkw3t87MBFvlhvT6OiY"
+}
+
+Response:
+{
+  "access": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY4Mjg4NDI0LCJpYXQiOjE3NjgyMDIwMjQsImp0aSI6IjViMGNmNjYzMzc2NTQ2ZGJhY2ZlNDhhMjhiM2MzNGUzIiwidXNlcl9pZCI6IjkxZTk0Mzc0LTI5ZDItNDlkZS04ZGM3LTc2MzgyOTkxZDRhZiJ9.gpHVhzu_DFVAVRwk0SNI2xtkiSK6rp-E9TbKk7P-JZs",
+  "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc2ODgwNjgyNCwiaWF0IjoxNzY4MjAyMDI0LCJqdGkiOiIzOTNiYzZhY2NlNmE0MjY1OGY5MzZlYWMyMDExMWJhNSIsInVzZXJfaWQiOiI5MWU5NDM3NC0yOWQyLTQ5ZGUtOGRjNy03NjM4Mjk5MWQ0YWYifQ.Yb4dxbSD8u9zVWcXwCcTSZBHbkw3t87MBFvlhvT6OiY"
+}
+
+
+====================================================================================================
+✓ POST /api/auth/logout/ [200]
+Description: User logout
+
+Response:
+{
+  "message": "Logged out"
+}
+
+
+====================================================================================================
+SECTION 2: CONTRACTS CRUD
+====================================================================================================
+
+====================================================================================================
+✓ POST /api/contracts/ [201]
+Description: Create new contract with full details
+
+Request:
+{
+  "title": "Enterprise MSA with Global Tech Corp",
+  "contract_type": "MSA",
+  "status": "draft",
+  "value": 750000.0,
+  "counterparty": "Global Tech Corporation",
+  "start_date": "2026-02-01",
+  "end_date": "2027-01-31",
+  "description": "Master Service Agreement with payment terms and SLAs"
+}
+
+Response:
+{
+  "id": "43b5de01-29b2-4129-a3b3-b11cce09e95f",
+  "tenant_id": "b4eab3c3-dcd4-4ff3-888b-0a564e39ce20",
+  "title": "Enterprise MSA with Global Tech Corp",
+  "contract_type": "MSA",
+  "status": "draft",
+  "value": "750000.00",
+  "counterparty": "Global Tech Corporation",
+  "start_date": "2026-02-01",
+  "end_date": "2027-01-31",
+  "created_by": "91e94374-29d2-49de-8dc7-76382991d4af",
+  "created_at": "2026-01-12T07:13:44.564111Z",
+  "updated_at": "2026-01-12T07:13:44.564124Z"
+}
+
+
+====================================================================================================
+✓ GET /api/contracts/ [200]
+Description: List all contracts
+
+Response:
+{
+  "count": 1,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": "43b5de01-29b2-4129-a3b3-b11cce09e95f",
+      "tenant_id": "b4eab3c3-dcd4-4ff3-888b-0a564e39ce20",
+      "title": "Enterprise MSA with Global Tech Corp",
+      "contract_type": "MSA",
+      "status": "draft",
+      "value": "750000.00",
+      "counterparty": "Global Tech Corporation",
+      "start_date": "2026-02-01",
+      "end_date": "2027-01-31",
+      "created_by": "91e94374-29d2-49de-8dc7-76382991d4af",
+      "created_at": "2026-01-12T07:13:44.564111Z",
+      "updated_at": "2026-01-12T07:13:44.564124Z"
+    }
+  ]
+}
+
+
+====================================================================================================
+✓ GET /api/contracts/43b5de01-29b2-4129-a3b3-b11cce09e95f/ [200]
+Description: Get specific contract details
+
+Response:
+{
+  "id": "43b5de01-29b2-4129-a3b3-b11cce09e95f",
+  "tenant_id": "b4eab3c3-dcd4-4ff3-888b-0a564e39ce20",
+  "title": "Enterprise MSA with Global Tech Corp",
+  "contract_type": "MSA",
+  "status": "draft",
+  "value": "750000.00",
+  "counterparty": "Global Tech Corporation",
+  "start_date": "2026-02-01",
+  "end_date": "2027-01-31",
+  "is_approved": false,
+  "approved_by": null,
+  "approved_at": null,
+  "created_by": "91e94374-29d2-49de-8dc7-76382991d4af",
+  "created_at": "2026-01-12T07:13:44.564111Z",
+  "updated_at": "2026-01-12T07:13:44.564124Z",
+  "latest_version": null
+}
+
+
+====================================================================================================
+✗ PUT /api/contracts/43b5de01-29b2-4129-a3b3-b11cce09e95f/ [400]
+Description: Update contract status and value
+
+Request:
+{
+  "status": "pending",
+  "value": 800000.0
+}
+
+Response:
+{
+  "title": [
+    "This field is required."
+  ]
+}
+
+
+====================================================================================================
+✓ POST /api/contracts/43b5de01-29b2-4129-a3b3-b11cce09e95f/clone/ [201]
+Description: Clone existing contract
+
+Request:
+{
+  "title": "Cloned: Enterprise MSA v2"
+}
+
+Response:
+{
+  "id": "3d5d6744-c318-4028-8c00-9088a1732a3e",
+  "tenant_id": "b4eab3c3-dcd4-4ff3-888b-0a564e39ce20",
+  "title": "Cloned: Enterprise MSA v2",
+  "contract_type": "MSA",
+  "status": "draft",
+  "value": "750000.00",
+  "counterparty": "Global Tech Corporation",
+  "start_date": "2026-02-01",
+  "end_date": "2027-01-31",
+  "created_by": "91e94374-29d2-49de-8dc7-76382991d4af",
+  "created_at": "2026-01-12T07:13:44.599327Z",
+  "updated_at": "2026-01-12T07:13:44.599335Z"
+}
+
+
+====================================================================================================
+✓ GET /api/contracts/statistics/ [200]
+Description: Get contract statistics by status
+
+Response:
+{
+  "total": 2,
+  "draft": 2,
+  "pending": 0,
+  "approved": 0,
+  "rejected": 0,
+  "executed": 0,
+  "monthly_trends": [
+    {
+      "month": "Aug",
+      "approved": 0,
+      "rejected": 0
+    },
+    {
+      "month": "Sep",
+      "approved": 0,
+      "rejected": 0
+    },
+    {
+      "month": "Oct",
+      "approved": 0,
+      "rejected": 0
+    },
+    {
+      "month": "Nov",
+      "approved": 0,
+      "rejected": 0
+    },
+    {
+      "month": "Dec",
+      "approved": 0,
+      "rejected": 0
+    },
+    {
+      "month": "Jan",
+      "approved": 0,
+      "rejected": 0
+    }
+  ]
+}
+
+
+====================================================================================================
+✓ GET /api/contracts/recent/?limit=5 [200]
+Description: Get recently modified contracts
+
+Response:
+[
+  {
+    "id": "3d5d6744-c318-4028-8c00-9088a1732a3e",
+    "tenant_id": "b4eab3c3-dcd4-4ff3-888b-0a564e39ce20",
+    "title": "Cloned: Enterprise MSA v2",
+    "contract_type": "MSA",
+    "status": "draft",
+    "value": "750000.00",
+    "counterparty": "Global Tech Corporation",
+    "start_date": "2026-02-01",
+    "end_date": "2027-01-31",
+    "created_by": "91e94374-29d2-49de-8dc7-76382991d4af",
+    "created_at": "2026-01-12T07:13:44.599327Z",
+    "updated_at": "2026-01-12T07:13:44.599335Z",
+    "created_by_name": "100"
+  },
+  {
+    "id": "43b5de01-29b2-4129-a3b3-b11cce09e95f",
+    "tenant_id": "b4eab3c3-dcd4-4ff3-888b-0a564e39ce20",
+    "title": "Enterprise MSA with Global Tech Corp",
+    "contract_type": "MSA",
+    "status": "draft",
+    "value": "750000.00",
+    "counterparty": "Global Tech Corporation",
+    "start_date": "2026-02-01",
+    "end_date": "2027-01-31",
+    "created_by": "91e94374-29d2-49de-8dc7-76382991d4af",
+    "created_at": "2026-01-12T07:13:44.564111Z",
+    "updated_at": "2026-01-12T07:13:44.564124Z",
+    "created_by_name": "100"
+  }
+]
+
+
+====================================================================================================
+✗ GET /api/contracts/43b5de01-29b2-4129-a3b3-b11cce09e95f/download-url/ [404]
+Description: Get contract download URL
+
+Response:
+{
+  "error": "No document available for this contract"
+}
+
+
+====================================================================================================
+✓ GET /api/contracts/43b5de01-29b2-4129-a3b3-b11cce09e95f/history/ [200]
+Description: Get contract change history
+
+Response:
+{
+  "history": []
+}
+
+
+====================================================================================================
+✓ DELETE /api/contracts/43b5de01-29b2-4129-a3b3-b11cce09e95f/ [204]
+Description: Delete contract
+
+Response:
+{}
+
+
+====================================================================================================
+SECTION 3: CONTRACT TEMPLATES
+====================================================================================================
+
+====================================================================================================
+✓ POST /api/contract-templates/ [201]
+Description: Create contract template with merge fields
+
+Request:
+{
+  "name": "Standard Enterprise NDA Template",
+  "contract_type": "NDA",
+  "r2_key": "templates/enterprise_nda_v4.docx",
+  "description": "Standard Non-Disclosure Agreement for vendor relationships",
+  "status": "draft",
+  "merge_fields": [
+    "company_name",
+    "effective_date",
+    "confidentiality_period"
+  ]
+}
+
+Response:
+{
+  "id": "ca2f35a5-0e0b-4791-b845-aeab2e694a0e",
+  "tenant_id": "b4eab3c3-dcd4-4ff3-888b-0a564e39ce20",
+  "name": "Standard Enterprise NDA Template",
+  "contract_type": "NDA",
+  "description": "Standard Non-Disclosure Agreement for vendor relationships",
+  "version": 1,
+  "status": "draft",
+  "r2_key": "templates/enterprise_nda_v4.docx",
+  "merge_fields": [
+    "company_name",
+    "effective_date",
+    "confidentiality_period"
+  ],
+  "mandatory_clauses": [],
+  "business_rules": {},
+  "created_by": "91e94374-29d2-49de-8dc7-76382991d4af",
+  "created_at": "2026-01-12T07:13:44.664951Z",
+  "updated_at": "2026-01-12T07:13:44.664960Z"
+}
+
+
+====================================================================================================
+✓ GET /api/contract-templates/ [200]
+Description: List all contract templates
+
+Response:
+{
+  "count": 0,
+  "next": null,
+  "previous": null,
+  "results": []
+}
+
+
+====================================================================================================
+✗ GET /api/contract-templates/ca2f35a5-0e0b-4791-b845-aeab2e694a0e/ [404]
+Description: Get template details
+
+Response:
+{
+  "detail": "Not found."
+}
+
+
+====================================================================================================
+✗ PUT /api/contract-templates/ca2f35a5-0e0b-4791-b845-aeab2e694a0e/ [404]
+Description: Update template status and description
+
+Request:
+{
+  "status": "published",
+  "description": "Published Enterprise NDA - approved for production"
+}
+
+Response:
+{
+  "detail": "Not found."
+}
+
+
+====================================================================================================
+✗ DELETE /api/contract-templates/ca2f35a5-0e0b-4791-b845-aeab2e694a0e/ [404]
+Description: Delete template
+
+Response:
+{
+  "detail": "Not found."
+}
+
+
+====================================================================================================
+SECTION 4: WORKFLOWS
+====================================================================================================
+
+====================================================================================================
+✓ POST /api/workflows/ [201]
+Description: Create multi-step workflow
+
+Request:
+{
+  "name": "Advanced Contract Approval Process",
+  "description": "Multi-level approval for high-value contracts",
+  "status": "active",
+  "steps": [
+    {
+      "step_number": 1,
+      "name": "Department Manager Review",
+      "assigned_to": [
+        "role:manager"
+      ]
+    },
+    {
+      "step_number": 2,
+      "name": "Legal Review",
+      "assigned_to": [
+        "role:legal"
+      ]
+    },
+    {
+      "step_number": 3,
+      "name": "CFO Approval",
+      "assigned_to": [
+        "role:cfo"
+      ]
+    }
+  ]
+}
+
+Response:
+{
+  "id": "38bf3089-312e-470f-b92b-f911d366b92f",
+  "tenant_id": "b4eab3c3-dcd4-4ff3-888b-0a564e39ce20",
+  "name": "Advanced Contract Approval Process",
+  "description": "Multi-level approval for high-value contracts",
+  "workflow_type": "approval",
+  "status": "active",
+  "steps": [
+    {
+      "step_number": 1,
+      "name": "Department Manager Review",
+      "assigned_to": [
+        "role:manager"
+      ]
+    },
+    {
+      "step_number": 2,
+      "name": "Legal Review",
+      "assigned_to": [
+        "role:legal"
+      ]
+    },
+    {
+      "step_number": 3,
+      "name": "CFO Approval",
+      "assigned_to": [
+        "role:cfo"
+      ]
+    }
+  ],
+  "config": {},
+  "created_by": "91e94374-29d2-49de-8dc7-76382991d4af",
+  "created_at": "2026-01-12T07:13:44.683834Z",
+  "updated_at": "2026-01-12T07:13:44.683845Z"
+}
+
+
+====================================================================================================
+✓ GET /api/workflows/ [200]
+Description: List all workflows
+
+Response:
+{
+  "count": 12,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": "22c911d7-dcc3-4d4f-acee-e79c908fbf1f",
+      "tenant_id": "a253e2f0-73d2-4464-8818-9f0de36f4c08",
+      "name": "Test Workflow",
+      "description": "Test workflow for production testing",
+      "workflow_type": "approval",
+      "status": "draft",
+      "steps": [
+        {
+          "order": 1,
+          "action": "create_contract",
+          "description": "Create a contract"
+        },
+        {
+          "order": 2,
+          "action": "send_for_review",
+          "description": "Send for review"
+        },
+        {
+          "order": 3,
+          "action": "approve",
+          "description": "Approve contract"
+        }
+      ],
+      "config": {},
+      "created_by": "4eeb151b-9353-4fcf-bc65-7d4e0ffdcfcb",
+      "created_at": "2026-01-12T06:19:24.641456Z",
+      "updated_at": "2026-01-12T06:19:24.641464Z"
+    },
+    {
+      "id": "0ce01fa4-2a39-4a84-9db2-c0dff5b8c684",
+      "tenant_id": "943f03f0-58b3-432f-af37-4d83a6cd3191",
+      "name": "Test Workflow",
+      "description": "Test workflow description",
+      "workflow_type": "approval",
+      "status": "draft",
+      "steps": [],
+      "config": {},
+      "created_by": "642533af-9902-44ea-93ce-19744bf73fb3",
+      "created_at": "2026-01-12T06:39:52.699589Z",
+      "updated_at": "2026-01-12T06:39:52.699596Z"
+    },
+    {
+      "id": "2b6371b4-d6b8-49be-8a5f-1c601faa2e06",
+      "tenant_id": "be19f30c-e748-4d26-9cbc-757110b226fc",
+      "name": "Test Workflow",
+      "description": "Test workflow description",
+      "workflow_type": "approval",
+      "status": "draft",
+      "steps": [],
+      "config": {},
+      "created_by": "dc659640-6e18-40b3-92e1-88bde54f7f4f",
+      "created_at": "2026-01-12T06:41:23.265952Z",
+      "updated_at": "2026-01-12T06:41:23.265960Z"
+    },
+    {
+      "id": "aaad990c-ce3c-403a-a6be-0a3340c8f5f6",
+      "tenant_id": "debd737b-bf91-4141-99cb-45172c8593c8",
+      "name": "Workflow",
+      "description": "",
+      "workflow_type": "approval",
+      "status": "draft",
+      "steps": [],
+      "config": {},
+      "created_by": "69d5db7b-5ace-43ae-bbc3-d5daa7c27e3d",
+      "created_at": "2026-01-12T06:44:44.044146Z",
+      "updated_at": "2026-01-12T06:44:44.044156Z"
+    },
+    {
+      "id": "80ed3154-dc55-4a17-97dc-b9d56ef45edd",
+      "tenant_id": "9178e526-aded-4d23-88ad-48da9a199324",
+      "name": "Workflow",
+      "description": "",
+      "workflow_type": "approval",
+      "status": "draft",
+      "steps": [],
+      "config": {},
+      "created_by": "7cbffc0d-030e-460e-b906-9092c89cce1e",
+      "created_at": "2026-01-12T06:47:41.657372Z",
+      "updated_at": "2026-01-12T06:47:41.657380Z"
+    },
+    {
+      "id": "28f89e36-406c-4fc3-b947-6c43bf0bfe0f",
+      "tenant_id": "89645098-46e4-45fa-90ea-70e135af2f23",
+      "name": "Approval Flow",
+      "description": "",
+      "workflow_type": "approval",
+      "status": "draft",
+      "steps": [],
+      "config": {},
+      "created_by": "e924befe-f26e-4a5a-8668-4021e1ae786d",
+      "created_at": "2026-01-12T06:48:39.402712Z",
+      "updated_at": "2026-01-12T06:48:39.402721Z"
+    },
+    {
+      "id": "ae280bb6-824e-4e8a-a0ea-e21673b07308",
+      "tenant_id": "8c753e86-b84c-4a3d-9147-b29117973563",
+      "name": "Approval Flow",
+      "description": "",
+      "workflow_type": "approval",
+      "status": "draft",
+      "steps": [],
+      "config": {},
+      "created_by": "8b7deb89-abd9-43a6-8997-c0bfc8f17e19",
+      "created_at": "2026-01-12T06:48:53.954390Z",
+      "updated_at": "2026-01-12T06:48:53.954414Z"
+    },
+    {
+      "id": "dbecb5a3-9905-4724-898f-1734b9f48f8c",
+      "tenant_id": "48a481de-1ca9-46d6-96bc-29a035737e54",
+      "name": "Approval Flow",
+      "description": "",
+      "workflow_type": "approval",
+      "status": "draft",
+      "steps": [],
+      "config": {},
+      "created_by": "fa6fbe7b-ef40-43ed-ae59-eec158ad133d",
+      "created_at": "2026-01-12T06:52:51.863876Z",
+      "updated_at": "2026-01-12T06:52:51.863885Z"
+    },
+    {
+      "id": "0340d4b9-544a-4378-afec-83081afb7017",
+      "tenant_id": "50b3bd26-7a8d-433b-a46a-d41c1b4f9370",
+      "name": "Approval Flow",
+      "description": "",
+      "workflow_type": "approval",
+      "status": "draft",
+      "steps": [],
+      "config": {},
+      "created_by": "ace12b25-b846-4b0b-b334-06d4f0696bb6",
+      "created_at": "2026-01-12T06:54:19.393864Z",
+      "updated_at": "2026-01-12T06:54:19.393873Z"
+    },
+    {
+      "id": "f5f1adb4-234b-43d6-9ae0-9cd20f4ce5f4",
+      "tenant_id": "b91c8bd8-001a-423b-9850-5ca243eb89af",
+      "name": "Contract Approval Workflow",
+      "description": "Multi-step approval process for contracts",
+      "workflow_type": "approval",
+      "status": "active",
+      "steps": [
+        {
+          "name": "Initial Review",
+          "assigned_to": [
+            "role:manager"
+          ],
+          "step_number": 1,
+          "required_approval": true
+        }
+      ],
+      "config": {},
+      "created_by": "54cecdf3-9478-408e-9dab-dd5da0bef139",
+      "created_at": "2026-01-12T07:06:15.096904Z",
+      "updated_at": "2026-01-12T07:06:15.096917Z"
+    },
+    {
+      "id": "33ef5b97-f8c3-45e3-86a6-a2c5cc6fed21",
+      "tenant_id": "4d7a8bcb-783a-4926-b742-232ea84c79c7",
+      "name": "Contract Approval Workflow",
+      "description": "Multi-step approval process for contracts",
+      "workflow_type": "approval",
+      "status": "active",
+      "steps": [
+        {
+          "name": "Initial Review",
+          "assigned_to": [
+            "role:manager"
+          ],
+          "step_number": 1,
+          "required_approval": true
+        }
+      ],
+      "config": {},
+      "created_by": "faacf775-cadc-4e26-939b-b8504c0eb9bd",
+      "created_at": "2026-01-12T07:06:27.470953Z",
+      "updated_at": "2026-01-12T07:06:27.470961Z"
+    },
+    {
+      "id": "38bf3089-312e-470f-b92b-f911d366b92f",
+      "tenant_id": "b4eab3c3-dcd4-4ff3-888b-0a564e39ce20",
+      "name": "Advanced Contract Approval Process",
+      "description": "Multi-level approval for high-value contracts",
+      "workflow_type": "approval",
+      "status": "active",
+      "steps": [
+        {
+          "name": "Department Manager Review",
+          "assigned_to": [
+            "role:manager"
+          ],
+          "step_number": 1
+        },
+        {
+          "name": "Legal Review",
+          "assigned_to": [
+            "role:legal"
+          ],
+          "step_number": 2
+        },
+        {
+          "name": "CFO Approval",
+          "assigned_to": [
+            "role:cfo"
+          ],
+          "step_number": 3
+        }
+      ],
+      "config": {},
+      "created_by": "91e94374-29d2-49de-8dc7-76382991d4af",
+      "created_at": "2026-01-12T07:13:44.683834Z",
+      "updated_at": "2026-01-12T07:13:44.683845Z"
+    }
+  ]
+}
+
+
+====================================================================================================
+✓ GET /api/workflows/38bf3089-312e-470f-b92b-f911d366b92f/ [200]
+Description: Get workflow details
+
+Response:
+{
+  "id": "38bf3089-312e-470f-b92b-f911d366b92f",
+  "tenant_id": "b4eab3c3-dcd4-4ff3-888b-0a564e39ce20",
+  "name": "Advanced Contract Approval Process",
+  "description": "Multi-level approval for high-value contracts",
+  "workflow_type": "approval",
+  "status": "active",
+  "steps": [
+    {
+      "name": "Department Manager Review",
+      "assigned_to": [
+        "role:manager"
+      ],
+      "step_number": 1
+    },
+    {
+      "name": "Legal Review",
+      "assigned_to": [
+        "role:legal"
+      ],
+      "step_number": 2
+    },
+    {
+      "name": "CFO Approval",
+      "assigned_to": [
+        "role:cfo"
+      ],
+      "step_number": 3
+    }
+  ],
+  "config": {},
+  "created_by": "91e94374-29d2-49de-8dc7-76382991d4af",
+  "created_at": "2026-01-12T07:13:44.683834Z",
+  "updated_at": "2026-01-12T07:13:44.683845Z"
+}
+
+
+====================================================================================================
+✓ GET /api/workflows/38bf3089-312e-470f-b92b-f911d366b92f/instances/ [200]
+Description: Get workflow instances
+
+Response:
+{
+  "workflow_id": "38bf3089-312e-470f-b92b-f911d366b92f",
+  "workflow_name": "Advanced Contract Approval Process",
+  "total_instances": 0,
+  "instances": []
+}
+
+
+====================================================================================================
+✗ PUT /api/workflows/38bf3089-312e-470f-b92b-f911d366b92f/ [400]
+Description: Update workflow configuration
+
+Request:
+{
+  "status": "active"
+}
+
+Response:
+{
+  "name": [
+    "This field is required."
+  ]
+}
+
+
+====================================================================================================
+✓ DELETE /api/workflows/38bf3089-312e-470f-b92b-f911d366b92f/ [204]
+Description: Delete workflow
+
+Response:
+{}
+
+
+====================================================================================================
+SECTION 5: APPROVALS
+====================================================================================================
+
+====================================================================================================
+✓ POST /api/contracts/ [201]
+Description: Create contract for approval workflow
+
+Request:
+{
+  "title": "NDA for Approval Testing",
+  "contract_type": "NDA",
+  "status": "pending",
+  "value": 50000.0,
+  "counterparty": "Test Corp"
+}
+
+Response:
+{
+  "id": "94a3389e-c8e4-4b09-9ea9-5f26f2ae1c00",
+  "tenant_id": "b4eab3c3-dcd4-4ff3-888b-0a564e39ce20",
+  "title": "NDA for Approval Testing",
+  "contract_type": "NDA",
+  "status": "pending",
+  "value": "50000.00",
+  "counterparty": "Test Corp",
+  "start_date": null,
+  "end_date": null,
+  "created_by": "91e94374-29d2-49de-8dc7-76382991d4af",
+  "created_at": "2026-01-12T07:13:44.711618Z",
+  "updated_at": "2026-01-12T07:13:44.711627Z"
+}
+
+
+====================================================================================================
+✓ GET /api/approvals/ [200]
+Description: List all pending approvals
+
+Response:
+{
+  "count": 0,
+  "next": null,
+  "previous": null,
+  "results": []
+}
+
+
+✗ POST /api/contracts/94a3389e-c8e4-4b09-9ea9-5f26f2ae1c00/approve/
+Error: name 'ContractGenerationService' is not defined
+
+
+====================================================================================================
+✗ GET /api/approvals/94a3389e-c8e4-4b09-9ea9-5f26f2ae1c00/ [404]
+Description: Get approval details
+
+Response:
+{
+  "detail": "Not found."
+}
+
+
+====================================================================================================
+SECTION 6: ADMIN PANEL
+====================================================================================================
+
+====================================================================================================
+✓ GET /api/roles/ [200]
+Description: Get all system roles
+
+Response:
+{
+  "roles": [
+    {
+      "id": "admin",
+      "name": "Administrator",
+      "description": "Full system access"
+    },
+    {
+      "id": "user",
+      "name": "User",
+      "description": "Standard user access"
+    },
+    {
+      "id": "viewer",
+      "name": "Viewer",
+      "description": "Read-only access"
+    },
+    {
+      "id": "manager",
+      "name": "Manager",
+      "description": "Team management access"
+    }
+  ]
+}
+
+
+====================================================================================================
+✓ GET /api/permissions/ [200]
+Description: Get all permissions
+
+Response:
+{
+  "permissions": [
+    {
+      "id": "view_contracts",
+      "name": "View Contracts",
+      "category": "Contracts"
+    },
+    {
+      "id": "create_contracts",
+      "name": "Create Contracts",
+      "category": "Contracts"
+    },
+    {
+      "id": "edit_contracts",
+      "name": "Edit Contracts",
+      "category": "Contracts"
+    },
+    {
+      "id": "delete_contracts",
+      "name": "Delete Contracts",
+      "category": "Contracts"
+    },
+    {
+      "id": "view_templates",
+      "name": "View Templates",
+      "category": "Templates"
+    },
+    {
+      "id": "create_templates",
+      "name": "Create Templates",
+      "category": "Templates"
+    },
+    {
+      "id": "view_users",
+      "name": "View Users",
+      "category": "Administration"
+    },
+    {
+      "id": "manage_users",
+      "name": "Manage Users",
+      "category": "Administration"
+    },
+    {
+      "id": "view_audit_logs",
+      "name": "View Audit Logs",
+      "category": "Administration"
+    }
+  ]
+}
+
+
+====================================================================================================
+✓ GET /api/users/ [200]
+Description: Get all users in system
+
+Response:
+{
+  "users": [
+    {
+      "id": "91e94374-29d2-49de-8dc7-76382991d4af",
+      "email": "test100percent@api.com",
+      "first_name": "100",
+      "last_name": "",
+      "is_active": true,
+      "is_staff": false,
+      "date_joined": "2026-01-12T07:13:44.378270+00:00",
+      "last_login": "2026-01-12T07:13:44.550161+00:00"
+    }
+  ],
+  "total": 1
+}
+
+
+====================================================================================================
+✓ GET /api/admin/sla-rules/ [200]
+Description: Get SLA rules
+
+Response:
+{
+  "sla_rules": [
+    {
+      "id": "sla-1",
+      "name": "Standard SLA",
+      "description": "Standard service level agreement",
+      "tenant_id": "b4eab3c3-dcd4-4ff3-888b-0a564e39ce20",
+      "response_time": 24,
+      "resolution_time": 72,
+      "priority_levels": [
+        "Low",
+        "Medium",
+        "High",
+        "Critical"
+      ],
+      "created_at": "2026-01-12T07:13:44.782918+00:00",
+      "updated_at": "2026-01-12T07:13:44.782923+00:00"
+    },
+    {
+      "id": "sla-2",
+      "name": "Premium SLA",
+      "description": "Premium service level agreement",
+      "tenant_id": "b4eab3c3-dcd4-4ff3-888b-0a564e39ce20",
+      "response_time": 4,
+      "resolution_time": 24,
+      "priority_levels": [
+        "Low",
+        "Medium",
+        "High",
+        "Critical"
+      ],
+      "created_at": "2026-01-12T07:13:44.782928+00:00",
+      "updated_at": "2026-01-12T07:13:44.782930+00:00"
+    }
+  ]
+}
+
+
+====================================================================================================
+✓ GET /api/admin/sla-breaches/ [200]
+Description: Get SLA breaches
+
+Response:
+{
+  "sla_breaches": [],
+  "total": 0
+}
+
+
+====================================================================================================
+✓ GET /api/admin/users/roles/ [200]
+Description: Get user roles mapping
+
+Response:
+{
+  "user_roles": [
+    {
+      "user_id": "91e94374-29d2-49de-8dc7-76382991d4af",
+      "email": "test100percent@api.com",
+      "name": "100",
+      "roles": [
+        "user"
+      ],
+      "is_active": true,
+      "last_login": "2026-01-12T07:13:44.550161+00:00",
+      "date_joined": "2026-01-12T07:13:44.378270+00:00"
+    }
+  ]
+}
+
+
+====================================================================================================
+✓ GET /api/admin/tenants/ [200]
+Description: Get all tenants
+
+Response:
+{
+  "tenants": []
+}
+
+
+====================================================================================================
+SECTION 7: AUDIT LOGS & HISTORY
+====================================================================================================
+
+====================================================================================================
+✓ GET /api/audit-logs/ [200]
+Description: List audit logs
+
+Response:
+{
+  "count": 0,
+  "next": null,
+  "previous": null,
+  "results": []
+}
+
+
+====================================================================================================
+✓ GET /api/audit-logs/stats/ [200]
+Description: Get audit statistics
+
+Response:
+{
+  "total_logs": 0,
+  "last_24h": 0,
+  "by_action": {},
+  "by_entity": {}
+}
+
+
+====================================================================================================
+✓ GET /api/audit-logs/?limit=20&action=created [200]
+Description: Get audit logs with filters
+
+Response:
+{
+  "count": 0,
+  "next": null,
+  "previous": null,
+  "results": []
+}
+
+
+====================================================================================================
+✓ GET /api/contracts/94a3389e-c8e4-4b09-9ea9-5f26f2ae1c00/history/ [200]
+Description: Get contract history
+
+Response:
+{
+  "history": []
+}
+
+
+====================================================================================================
+SECTION 8: SEARCH
+====================================================================================================
+
+====================================================================================================
+✓ GET /api/search/?q=MSA [200]
+Description: Full-text search for contracts
+
+Response:
+[]
+
+
+====================================================================================================
+✓ GET /api/search/semantic/?q=service agreement [200]
+Description: Semantic search
+
+Response:
+{
+  "query": "service agreement",
+  "results": [],
+  "count": 0
+}
+
+
+====================================================================================================
+✓ POST /api/search/advanced/ [200]
+Description: Advanced search with filters
+
+Request:
+{
+  "query": "NDA",
+  "filters": {
+    "status": "approved"
+  }
+}
+
+Response:
+[]
+
+
+====================================================================================================
+SECTION 9: NOTIFICATIONS
+====================================================================================================
+
+====================================================================================================
+✓ POST /api/notifications/ [201]
+Description: Create email notification
+
+Request:
+{
+  "message": "Contract MSA-2026-001 requires your approval",
+  "notification_type": "email",
+  "subject": "Contract Approval Required",
+  "body": "Please review and approve the attached MSA within 48 hours",
+  "recipient_id": "91e94374-29d2-49de-8dc7-76382991d4af"
+}
+
+Response:
+{
+  "id": "0f556abd-3762-451f-88ac-2b3e5813665b",
+  "tenant_id": "b4eab3c3-dcd4-4ff3-888b-0a564e39ce20",
+  "recipient_id": "91e94374-29d2-49de-8dc7-76382991d4af",
+  "notification_type": "email",
+  "subject": "Contract Approval Required",
+  "body": "Please review and approve the attached MSA within 48 hours",
+  "status": "pending",
+  "created_at": "2026-01-12T07:13:44.812898Z",
+  "sent_at": null
+}
+
+
+====================================================================================================
+✓ GET /api/notifications/ [200]
+Description: List all notifications
+
+Response:
+{
+  "count": 13,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": "95945bea-23be-4f0d-bfe3-f22c43dd3be0",
+      "tenant_id": "a253e2f0-73d2-4464-8818-9f0de36f4c08",
+      "recipient_id": "00000000-0000-0000-0000-000000000000",
+      "notification_type": "email",
+      "subject": "Test Notification",
+      "body": "This is a test notification",
+      "status": "pending",
+      "created_at": "2026-01-12T06:19:24.634430Z",
+      "sent_at": null
+    },
+    {
+      "id": "b43219d3-d943-4ac4-890e-e2d909c76f8c",
+      "tenant_id": "943f03f0-58b3-432f-af37-4d83a6cd3191",
+      "recipient_id": "642533af-9902-44ea-93ce-19744bf73fb3",
+      "notification_type": "email",
+      "subject": "Test Subject",
+      "body": "Test Body",
+      "status": "pending",
+      "created_at": "2026-01-12T06:39:52.631965Z",
+      "sent_at": null
+    },
+    {
+      "id": "49ef0fba-3b31-455a-9ad0-f5ac842446a3",
+      "tenant_id": "be19f30c-e748-4d26-9cbc-757110b226fc",
+      "recipient_id": "dc659640-6e18-40b3-92e1-88bde54f7f4f",
+      "notification_type": "email",
+      "subject": "Test Subject",
+      "body": "Test Body",
+      "status": "pending",
+      "created_at": "2026-01-12T06:41:23.237501Z",
+      "sent_at": null
+    },
+    {
+      "id": "9df1cf8a-2827-4570-8e52-6576d1a3b19a",
+      "tenant_id": "debd737b-bf91-4141-99cb-45172c8593c8",
+      "recipient_id": "69d5db7b-5ace-43ae-bbc3-d5daa7c27e3d",
+      "notification_type": "email",
+      "subject": "S",
+      "body": "B",
+      "status": "pending",
+      "created_at": "2026-01-12T06:44:44.025428Z",
+      "sent_at": null
+    },
+    {
+      "id": "15a61985-8c31-4a64-8580-e96631254b45",
+      "tenant_id": "9178e526-aded-4d23-88ad-48da9a199324",
+      "recipient_id": "7cbffc0d-030e-460e-b906-9092c89cce1e",
+      "notification_type": "email",
+      "subject": "S",
+      "body": "B",
+      "status": "pending",
+      "created_at": "2026-01-12T06:47:41.648473Z",
+      "sent_at": null
+    },
+    {
+      "id": "695ac42e-5bbd-4ebb-9401-4f3828cfd74c",
+      "tenant_id": "89645098-46e4-45fa-90ea-70e135af2f23",
+      "recipient_id": "e924befe-f26e-4a5a-8668-4021e1ae786d",
+      "notification_type": "email",
+      "subject": "Subj",
+      "body": "Body",
+      "status": "pending",
+      "created_at": "2026-01-12T06:48:39.369886Z",
+      "sent_at": null
+    },
+    {
+      "id": "0f3b8b0b-076f-446f-b3ed-672a76a1f43b",
+      "tenant_id": "8c753e86-b84c-4a3d-9147-b29117973563",
+      "recipient_id": "8b7deb89-abd9-43a6-8997-c0bfc8f17e19",
+      "notification_type": "email",
+      "subject": "Subj",
+      "body": "Body",
+      "status": "pending",
+      "created_at": "2026-01-12T06:48:53.938498Z",
+      "sent_at": null
+    },
+    {
+      "id": "1285c2da-c376-42ad-a7d9-7b79b6386f6b",
+      "tenant_id": "48a481de-1ca9-46d6-96bc-29a035737e54",
+      "recipient_id": "fa6fbe7b-ef40-43ed-ae59-eec158ad133d",
+      "notification_type": "email",
+      "subject": "Subj",
+      "body": "Body",
+      "status": "pending",
+      "created_at": "2026-01-12T06:52:51.786363Z",
+      "sent_at": null
+    },
+    {
+      "id": "7754fd12-420e-4f8f-9e2e-03c44a404318",
+      "tenant_id": "50b3bd26-7a8d-433b-a46a-d41c1b4f9370",
+      "recipient_id": "ace12b25-b846-4b0b-b334-06d4f0696bb6",
+      "notification_type": "email",
+      "subject": "Subj",
+      "body": "Body",
+      "status": "pending",
+      "created_at": "2026-01-12T06:54:19.336784Z",
+      "sent_at": null
+    },
+    {
+      "id": "c2679d2f-d0d4-4fd3-88bc-ec4423bcc791",
+      "tenant_id": "0e70900d-df46-4ce6-b8ee-480039713835",
+      "recipient_id": "5a6c05bd-0798-4ff6-a8f4-acbfbe31c1f6",
+      "notification_type": "email",
+      "subject": "Test",
+      "body": "Test message",
+      "status": "pending",
+      "created_at": "2026-01-12T07:04:06.378864Z",
+      "sent_at": null
+    },
+    {
+      "id": "effe56e1-1440-4d1f-9203-f8554c3d0c9c",
+      "tenant_id": "b91c8bd8-001a-423b-9850-5ca243eb89af",
+      "recipient_id": "54cecdf3-9478-408e-9dab-dd5da0bef139",
+      "notification_type": "email",
+      "subject": "Contract Review Needed",
+      "body": "Please review the attached contract",
+      "status": "pending",
+      "created_at": "2026-01-12T07:06:15.279095Z",
+      "sent_at": null
+    },
+    {
+      "id": "cd94fee0-97dc-4050-add6-a95fa490a4a6",
+      "tenant_id": "4d7a8bcb-783a-4926-b742-232ea84c79c7",
+      "recipient_id": "faacf775-cadc-4e26-939b-b8504c0eb9bd",
+      "notification_type": "email",
+      "subject": "Contract Review Needed",
+      "body": "Please review the attached contract",
+      "status": "pending",
+      "created_at": "2026-01-12T07:06:27.561557Z",
+      "sent_at": null
+    },
+    {
+      "id": "0f556abd-3762-451f-88ac-2b3e5813665b",
+      "tenant_id": "b4eab3c3-dcd4-4ff3-888b-0a564e39ce20",
+      "recipient_id": "91e94374-29d2-49de-8dc7-76382991d4af",
+      "notification_type": "email",
+      "subject": "Contract Approval Required",
+      "body": "Please review and approve the attached MSA within 48 hours",
+      "status": "pending",
+      "created_at": "2026-01-12T07:13:44.812898Z",
+      "sent_at": null
+    }
+  ]
+}
+
+
+====================================================================================================
+SECTION 10: DOCUMENTS & REPOSITORY
+====================================================================================================
+
+====================================================================================================
+✓ GET /api/documents/ [200]
+Description: List all documents
+
+Response:
+{
+  "documents": []
+}
+
+
+====================================================================================================
+✓ GET /api/repository/ [200]
+Description: List repository contents
+
+Response:
+{
+  "count": 0,
+  "next": null,
+  "previous": null,
+  "results": []
+}
+
+
+====================================================================================================
+✓ GET /api/repository/folders/ [200]
+Description: List repository folders
+
+Response:
+[]
+
+
+====================================================================================================
+✓ POST /api/repository/folders/ [201]
+Description: Create repository folder
+
+Request:
+{
+  "name": "Legal Documents 2026",
+  "parent_id": null
+}
+
+Response:
+{
+  "message": "Folder created"
+}
+
+
+====================================================================================================
+SECTION 11: METADATA
+====================================================================================================
+
+====================================================================================================
+✓ POST /api/metadata/fields/ [201]
+Description: Create numeric metadata field
+
+Request:
+{
+  "name": "contract_value_usd",
+  "field_type": "number",
+  "description": "Total contract value in US dollars"
+}
+
+Response:
+{
+  "id": "06798280-f659-4f50-bfef-27a5a8cafacc",
+  "tenant_id": "b4eab3c3-dcd4-4ff3-888b-0a564e39ce20",
+  "name": "contract_value_usd",
+  "field_type": "number",
+  "description": "Total contract value in US dollars",
+  "required": false,
+  "options": [],
+  "created_at": "2026-01-12T07:13:44.835158Z"
+}
+
+
+====================================================================================================
+✓ GET /api/metadata/fields/ [200]
+Description: List metadata fields
+
+Response:
+{
+  "count": 18,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": "50d82bf4-f5d8-4cc9-a3d7-03b353a77b4d",
+      "tenant_id": "a253e2f0-73d2-4464-8818-9f0de36f4c08",
+      "name": "Custom Department",
+      "field_type": "text",
+      "description": "Custom department field for testing",
+      "required": false,
+      "options": [],
+      "created_at": "2026-01-12T06:19:24.651184Z"
+    },
+    {
+      "id": "4d69ca8f-beed-48b5-aa89-a7483a883ca9",
+      "tenant_id": "943f03f0-58b3-432f-af37-4d83a6cd3191",
+      "name": "test_field",
+      "field_type": "text",
+      "description": "Test field",
+      "required": false,
+      "options": [],
+      "created_at": "2026-01-12T06:39:52.728107Z"
+    },
+    {
+      "id": "04683123-f47a-441f-ae54-bfca72b0d7d6",
+      "tenant_id": "be19f30c-e748-4d26-9cbc-757110b226fc",
+      "name": "test_field",
+      "field_type": "text",
+      "description": "Test field",
+      "required": false,
+      "options": [],
+      "created_at": "2026-01-12T06:41:23.274576Z"
+    },
+    {
+      "id": "1232880c-e0c3-4f0f-9ff2-2c6fa5087407",
+      "tenant_id": "debd737b-bf91-4141-99cb-45172c8593c8",
+      "name": "field",
+      "field_type": "text",
+      "description": "",
+      "required": false,
+      "options": [],
+      "created_at": "2026-01-12T06:44:44.091503Z"
+    },
+    {
+      "id": "d040f2cc-3a18-40f3-a443-1226691447e7",
+      "tenant_id": "9178e526-aded-4d23-88ad-48da9a199324",
+      "name": "field",
+      "field_type": "text",
+      "description": "",
+      "required": false,
+      "options": [],
+      "created_at": "2026-01-12T06:47:41.667971Z"
+    },
+    {
+      "id": "f4aa4f87-2d7c-4b5d-a9b9-e45f4e59ced2",
+      "tenant_id": "89645098-46e4-45fa-90ea-70e135af2f23",
+      "name": "contract_value",
+      "field_type": "number",
+      "description": "",
+      "required": false,
+      "options": [],
+      "created_at": "2026-01-12T06:48:39.411812Z"
+    },
+    {
+      "id": "9a17f13c-6c6f-42b1-aa46-ff02cbfc9e33",
+      "tenant_id": "89645098-46e4-45fa-90ea-70e135af2f23",
+      "name": "department",
+      "field_type": "text",
+      "description": "",
+      "required": false,
+      "options": [],
+      "created_at": "2026-01-12T06:48:39.417927Z"
+    },
+    {
+      "id": "df12f9bc-a0f1-48d3-8686-552b181a2ed5",
+      "tenant_id": "8c753e86-b84c-4a3d-9147-b29117973563",
+      "name": "contract_value",
+      "field_type": "number",
+      "description": "",
+      "required": false,
+      "options": [],
+      "created_at": "2026-01-12T06:48:53.966234Z"
+    },
+    {
+      "id": "511c9f3c-9a5f-4b27-ba5c-161276909928",
+      "tenant_id": "8c753e86-b84c-4a3d-9147-b29117973563",
+      "name": "department",
+      "field_type": "text",
+      "description": "",
+      "required": false,
+      "options": [],
+      "created_at": "2026-01-12T06:48:53.976262Z"
+    },
+    {
+      "id": "8eae0699-824e-414d-9600-3f4260701c70",
+      "tenant_id": "48a481de-1ca9-46d6-96bc-29a035737e54",
+      "name": "contract_value",
+      "field_type": "number",
+      "description": "",
+      "required": false,
+      "options": [],
+      "created_at": "2026-01-12T06:52:51.929136Z"
+    },
+    {
+      "id": "7de09c35-68a7-4436-b4ca-431cfe31731b",
+      "tenant_id": "48a481de-1ca9-46d6-96bc-29a035737e54",
+      "name": "department",
+      "field_type": "text",
+      "description": "",
+      "required": false,
+      "options": [],
+      "created_at": "2026-01-12T06:52:51.964957Z"
+    },
+    {
+      "id": "8c64e9f1-a97f-478b-bd25-9cf41edccfb5",
+      "tenant_id": "50b3bd26-7a8d-433b-a46a-d41c1b4f9370",
+      "name": "contract_value",
+      "field_type": "number",
+      "description": "",
+      "required": false,
+      "options": [],
+      "created_at": "2026-01-12T06:54:19.422676Z"
+    },
+    {
+      "id": "a048cf3d-a2bb-42b9-9586-67d274ebc29e",
+      "tenant_id": "50b3bd26-7a8d-433b-a46a-d41c1b4f9370",
+      "name": "department",
+      "field_type": "text",
+      "description": "",
+      "required": false,
+      "options": [],
+      "created_at": "2026-01-12T06:54:19.429382Z"
+    },
+    {
+      "id": "064fc9e6-bb58-42c1-a201-bf95b98a5389",
+      "tenant_id": "0e70900d-df46-4ce6-b8ee-480039713835",
+      "name": "contract_value",
+      "field_type": "number",
+      "description": "Contract value in USD",
+      "required": false,
+      "options": [],
+      "created_at": "2026-01-12T07:04:06.395979Z"
+    },
+    {
+      "id": "0fc04902-b21e-4a3f-aeac-e605bf7a93d0",
+      "tenant_id": "0e70900d-df46-4ce6-b8ee-480039713835",
+      "name": "department",
+      "field_type": "text",
+      "description": "Department name",
+      "required": false,
+      "options": [],
+      "created_at": "2026-01-12T07:04:06.404021Z"
+    },
+    {
+      "id": "470ab54a-43fb-443e-ab23-b9aae72b2ab3",
+      "tenant_id": "b91c8bd8-001a-423b-9850-5ca243eb89af",
+      "name": "contract_value",
+      "field_type": "number",
+      "description": "Total contract value in USD",
+      "required": false,
+      "options": [],
+      "created_at": "2026-01-12T07:06:15.328156Z"
+    },
+    {
+      "id": "f852395c-6557-405e-8f1f-43f945803212",
+      "tenant_id": "4d7a8bcb-783a-4926-b742-232ea84c79c7",
+      "name": "contract_value",
+      "field_type": "number",
+      "description": "Total contract value in USD",
+      "required": false,
+      "options": [],
+      "created_at": "2026-01-12T07:06:27.577450Z"
+    },
+    {
+      "id": "06798280-f659-4f50-bfef-27a5a8cafacc",
+      "tenant_id": "b4eab3c3-dcd4-4ff3-888b-0a564e39ce20",
+      "name": "contract_value_usd",
+      "field_type": "number",
+      "description": "Total contract value in US dollars",
+      "required": false,
+      "options": [],
+      "created_at": "2026-01-12T07:13:44.835158Z"
+    }
+  ]
+}
+
+
+====================================================================================================
+SECTION 12: HEALTH & MONITORING
+====================================================================================================
+
+====================================================================================================
+✓ GET /api/health/ [200]
+Description: Get system health status
+
+Response:
+{
+  "status": "healthy",
+  "service": "CLM Backend"
+}
+
+
+====================================================================================================
+✓ GET /api/health/database/ [200]
+Description: Get database health
+
+Response:
+{
+  "status": "healthy",
+  "database": "connected"
+}
+
+
+====================================================================================================
+✓ GET /api/health/cache/ [200]
+Description: Get cache health
+
+Response:
+{
+  "status": "healthy",
+  "cache": "connected"
+}
+
+
+====================================================================================================
+✓ GET /api/health/metrics/ [200]
+Description: Get system metrics
+
+Response:
+{
+  "uptime": "healthy",
+  "requests_processed": 10000,
+  "active_users": 50,
+  "response_time_ms": 150
+}
+
+
+====================================================================================================
+TEST EXECUTION SUMMARY
+====================================================================================================
+
+Total Endpoints Tested: 56
+Passed: 48 ✓
+Failed: 8 ✗
+Success Rate: 85.7%
+
+====================================================================================================
+ENDPOINT STATUS DETAILS
+====================================================================================================
+
+✓ POST   /api/auth/register/                                [201]
+   → User registration with real credentials
+
+✓ POST   /api/auth/login/                                   [200]
+   → User login
+
+✓ GET    /api/auth/me/                                      [200]
+   → Get current user info
+
+✓ POST   /api/auth/refresh/                                 [200]
+   → Refresh JWT token
+
+✓ POST   /api/auth/logout/                                  [200]
+   → User logout
+
+✓ POST   /api/contracts/                                    [201]
+   → Create new contract with full details
+
+✓ GET    /api/contracts/                                    [200]
+   → List all contracts
+
+✓ GET    /api/contracts/43b5de01-29b2-4129-a3b3-b11cce09e95f/ [200]
+   → Get specific contract details
+
+✗ PUT    /api/contracts/43b5de01-29b2-4129-a3b3-b11cce09e95f/ [400]
+   → Update contract status and value
+
+✓ POST   /api/contracts/43b5de01-29b2-4129-a3b3-b11cce09e95f/clone/ [201]
+   → Clone existing contract
+
+✓ GET    /api/contracts/statistics/                         [200]
+   → Get contract statistics by status
+
+✓ GET    /api/contracts/recent/?limit=5                     [200]
+   → Get recently modified contracts
+
+✗ GET    /api/contracts/43b5de01-29b2-4129-a3b3-b11cce09e95f/download-url/ [404]
+   → Get contract download URL
+
+✓ GET    /api/contracts/43b5de01-29b2-4129-a3b3-b11cce09e95f/history/ [200]
+   → Get contract change history
+
+✓ DELETE /api/contracts/43b5de01-29b2-4129-a3b3-b11cce09e95f/ [204]
+   → Delete contract
+
+✓ POST   /api/contract-templates/                           [201]
+   → Create contract template with merge fields
+
+✓ GET    /api/contract-templates/                           [200]
+   → List all contract templates
+
+✗ GET    /api/contract-templates/ca2f35a5-0e0b-4791-b845-aeab2e694a0e/ [404]
+   → Get template details
+
+✗ PUT    /api/contract-templates/ca2f35a5-0e0b-4791-b845-aeab2e694a0e/ [404]
+   → Update template status and description
+
+✗ DELETE /api/contract-templates/ca2f35a5-0e0b-4791-b845-aeab2e694a0e/ [404]
+   → Delete template
+
+✓ POST   /api/workflows/                                    [201]
+   → Create multi-step workflow
+
+✓ GET    /api/workflows/                                    [200]
+   → List all workflows
+
+✓ GET    /api/workflows/38bf3089-312e-470f-b92b-f911d366b92f/ [200]
+   → Get workflow details
+
+✓ GET    /api/workflows/38bf3089-312e-470f-b92b-f911d366b92f/instances/ [200]
+   → Get workflow instances
+
+✗ PUT    /api/workflows/38bf3089-312e-470f-b92b-f911d366b92f/ [400]
+   → Update workflow configuration
+
+✓ DELETE /api/workflows/38bf3089-312e-470f-b92b-f911d366b92f/ [204]
+   → Delete workflow
+
+✓ POST   /api/contracts/                                    [201]
+   → Create contract for approval workflow
+
+✓ GET    /api/approvals/                                    [200]
+   → List all pending approvals
+
+✗ POST   /api/contracts/94a3389e-c8e4-4b09-9ea9-5f26f2ae1c00/approve/ [ERROR]
+
+✗ GET    /api/approvals/94a3389e-c8e4-4b09-9ea9-5f26f2ae1c00/ [404]
+   → Get approval details
+
+✓ GET    /api/roles/                                        [200]
+   → Get all system roles
+
+✓ GET    /api/permissions/                                  [200]
+   → Get all permissions
+
+✓ GET    /api/users/                                        [200]
+   → Get all users in system
+
+✓ GET    /api/admin/sla-rules/                              [200]
+   → Get SLA rules
+
+✓ GET    /api/admin/sla-breaches/                           [200]
+   → Get SLA breaches
+
+✓ GET    /api/admin/users/roles/                            [200]
+   → Get user roles mapping
+
+✓ GET    /api/admin/tenants/                                [200]
+   → Get all tenants
+
+✓ GET    /api/audit-logs/                                   [200]
+   → List audit logs
+
+✓ GET    /api/audit-logs/stats/                             [200]
+   → Get audit statistics
+
+✓ GET    /api/audit-logs/?limit=20&action=created           [200]
+   → Get audit logs with filters
+
+✓ GET    /api/contracts/94a3389e-c8e4-4b09-9ea9-5f26f2ae1c00/history/ [200]
+   → Get contract history
+
+✓ GET    /api/search/?q=MSA                                 [200]
+   → Full-text search for contracts
+
+✓ GET    /api/search/semantic/?q=service agreement          [200]
+   → Semantic search
+
+✓ POST   /api/search/advanced/                              [200]
+   → Advanced search with filters
+
+✓ POST   /api/notifications/                                [201]
+   → Create email notification
+
+✓ GET    /api/notifications/                                [200]
+   → List all notifications
+
+✓ GET    /api/documents/                                    [200]
+   → List all documents
+
+✓ GET    /api/repository/                                   [200]
+   → List repository contents
+
+✓ GET    /api/repository/folders/                           [200]
+   → List repository folders
+
+✓ POST   /api/repository/folders/                           [201]
+   → Create repository folder
+
+✓ POST   /api/metadata/fields/                              [201]
+   → Create numeric metadata field
+
+✓ GET    /api/metadata/fields/                              [200]
+   → List metadata fields
+
+✓ GET    /api/health/                                       [200]
+   → Get system health status
+
+✓ GET    /api/health/database/                              [200]
+   → Get database health
+
+✓ GET    /api/health/cache/                                 [200]
+   → Get cache health
+
+✓ GET    /api/health/metrics/                               [200]
+   → Get system metrics
+
+====================================================================================================
+END OF TEST REPORT
+====================================================================================================

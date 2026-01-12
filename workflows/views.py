@@ -24,6 +24,24 @@ class WorkflowViewSet(viewsets.ModelViewSet):
             'recent_instances': WorkflowInstanceSerializer(instances, many=True).data
         })
     
+    @action(detail=True, methods=['get'])
+    def instances(self, request, id=None):
+        """GET /workflows/{id}/instances/
+        
+        Get all instances of this workflow
+        """
+        workflow = self.get_object()
+        instances = WorkflowInstance.objects.filter(
+            workflow=workflow
+        ).order_by('-created_at')
+        
+        return Response({
+            'workflow_id': str(workflow.id),
+            'workflow_name': workflow.name,
+            'total_instances': instances.count(),
+            'instances': WorkflowInstanceSerializer(instances, many=True).data
+        })
+    
     @action(detail=False, methods=['get'])
     def config(self, request):
         return Response({

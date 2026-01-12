@@ -1,0 +1,1496 @@
+====================================================================================================
+CLM BACKEND - COMPREHENSIVE API TEST WITH ACTUAL RESPONSES
+Generated: January 12, 2026
+====================================================================================================
+
+====================================================================================================
+SECTION 1: AUTHENTICATION
+====================================================================================================
+
+====================================================================================================
+✓ POST /api/auth/register/
+Status: 201
+Request Body:
+{
+  "email": "testuser@api.com",
+  "password": "TestPassword123!@#",
+  "full_name": "Test API User"
+}
+
+Response:
+{
+  "access": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY4Mjg3OTg3LCJpYXQiOjE3NjgyMDE1ODcsImp0aSI6ImMwNThjZmE1NGQ4NTQ4ZTA5ZjYyN2NhMDU3NWZjZGE3IiwidXNlcl9pZCI6ImZhYWNmNzc1LWNhZGMtNGUyNi05MzliLWI4NTA0YzBlYjliZCJ9.nt8p7CE5s_fRFGqzCuyT_aMTwln0H7CzUiy6KYNN6ss",
+  "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc2ODgwNjM4NywiaWF0IjoxNzY4MjAxNTg3LCJqdGkiOiIyMmQ0MjIzMmYyN2I0YjYyODA3NjJkMGYxZTY2NzBlYSIsInVzZXJfaWQiOiJmYWFjZjc3NS1jYWRjLTRlMjYtOTM5Yi1iODUwNGMwZWI5YmQifQ.Hu47Pn-KozmjYM4NsQDRbWrPwqTZc1aiEOI0_dX9NR8",
+  "user": {
+    "user_id": "faacf775-cadc-4e26-939b-b8504c0eb9bd",
+    "email": "testuser@api.com"
+  }
+}
+
+
+====================================================================================================
+✓ POST /api/auth/login/
+Status: 200
+Request Body:
+{
+  "email": "testuser@api.com",
+  "password": "TestPassword123!@#"
+}
+
+Response:
+{
+  "access": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY4Mjg3OTg3LCJpYXQiOjE3NjgyMDE1ODcsImp0aSI6IjFhYWUyN2RlZTJkOTQxYWViYmYwMDJhMDcyMzY5OGZiIiwidXNlcl9pZCI6ImZhYWNmNzc1LWNhZGMtNGUyNi05MzliLWI4NTA0YzBlYjliZCJ9.tSlbDwcbrARcHQ3thAvv3PJE7-AGSr0iPeXG0ZmbkIE",
+  "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc2ODgwNjM4NywiaWF0IjoxNzY4MjAxNTg3LCJqdGkiOiIwNzlkODQxZWYwYTE0MzEzOTcwYWZmMTQ0M2YxNWU5ZCIsInVzZXJfaWQiOiJmYWFjZjc3NS1jYWRjLTRlMjYtOTM5Yi1iODUwNGMwZWI5YmQifQ.7bTjatKZiPn0X0sAvQiULOgCF0Sc-NEaNErweQFhScw",
+  "user": {
+    "user_id": "faacf775-cadc-4e26-939b-b8504c0eb9bd",
+    "email": "testuser@api.com",
+    "tenant_id": "4d7a8bcb-783a-4926-b742-232ea84c79c7"
+  }
+}
+
+
+====================================================================================================
+✓ GET /api/auth/me/
+Status: 200
+Response:
+{
+  "user_id": "faacf775-cadc-4e26-939b-b8504c0eb9bd",
+  "email": "testuser@api.com",
+  "tenant_id": "4d7a8bcb-783a-4926-b742-232ea84c79c7"
+}
+
+
+====================================================================================================
+✓ POST /api/auth/refresh/
+Status: 200
+Request Body:
+{
+  "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc2ODgwNjM4NywiaWF0IjoxNzY4MjAxNTg3LCJqdGkiOiIwNzlkODQxZWYwYTE0MzEzOTcwYWZmMTQ0M2YxNWU5ZCIsInVzZXJfaWQiOiJmYWFjZjc3NS1jYWRjLTRlMjYtOTM5Yi1iODUwNGMwZWI5YmQifQ.7bTjatKZiPn0X0sAvQiULOgCF0Sc-NEaNErweQFhScw"
+}
+
+Response:
+{
+  "access": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY4Mjg3OTg3LCJpYXQiOjE3NjgyMDE1ODcsImp0aSI6IjAwNzk4MGRlOTRiODRmYjU4YjkxMGM3NzI1NjczMmFiIiwidXNlcl9pZCI6ImZhYWNmNzc1LWNhZGMtNGUyNi05MzliLWI4NTA0YzBlYjliZCJ9.VcSS8D3Nq6itZae6VU4Dg1Or6WL9Pvs7c33zykNP_dc",
+  "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc2ODgwNjM4NywiaWF0IjoxNzY4MjAxNTg3LCJqdGkiOiIwNzlkODQxZWYwYTE0MzEzOTcwYWZmMTQ0M2YxNWU5ZCIsInVzZXJfaWQiOiJmYWFjZjc3NS1jYWRjLTRlMjYtOTM5Yi1iODUwNGMwZWI5YmQifQ.7bTjatKZiPn0X0sAvQiULOgCF0Sc-NEaNErweQFhScw"
+}
+
+
+====================================================================================================
+SECTION 2: CONTRACTS CRUD
+====================================================================================================
+
+====================================================================================================
+✓ POST /api/contracts/
+Status: 201
+Request Body:
+{
+  "title": "Service Agreement with Acme Corp",
+  "contract_type": "MSA",
+  "status": "draft",
+  "value": 50000.0,
+  "counterparty": "Acme Corporation",
+  "start_date": "2026-01-15",
+  "end_date": "2027-01-14",
+  "description": "Main service agreement"
+}
+
+Response:
+{
+  "id": "a27bab38-080d-4cce-a2f7-10a5634e0005",
+  "tenant_id": "4d7a8bcb-783a-4926-b742-232ea84c79c7",
+  "title": "Service Agreement with Acme Corp",
+  "contract_type": "MSA",
+  "status": "draft",
+  "value": "50000.00",
+  "counterparty": "Acme Corporation",
+  "start_date": "2026-01-15",
+  "end_date": "2027-01-14",
+  "created_by": "faacf775-cadc-4e26-939b-b8504c0eb9bd",
+  "created_at": "2026-01-12T07:06:27.383608Z",
+  "updated_at": "2026-01-12T07:06:27.383615Z"
+}
+
+
+====================================================================================================
+✓ GET /api/contracts/
+Status: 200
+Response:
+{
+  "count": 1,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": "a27bab38-080d-4cce-a2f7-10a5634e0005",
+      "tenant_id": "4d7a8bcb-783a-4926-b742-232ea84c79c7",
+      "title": "Service Agreement with Acme Corp",
+      "contract_type": "MSA",
+      "status": "draft",
+      "value": "50000.00",
+      "counterparty": "Acme Corporation",
+      "start_date": "2026-01-15",
+      "end_date": "2027-01-14",
+      "created_by": "faacf775-cadc-4e26-939b-b8504c0eb9bd",
+      "created_at": "2026-01-12T07:06:27.383608Z",
+      "updated_at": "2026-01-12T07:06:27.383615Z"
+    }
+  ]
+}
+
+
+====================================================================================================
+✓ GET /api/contracts/?limit=5&offset=0
+Status: 200
+Response:
+{
+  "count": 1,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": "a27bab38-080d-4cce-a2f7-10a5634e0005",
+      "tenant_id": "4d7a8bcb-783a-4926-b742-232ea84c79c7",
+      "title": "Service Agreement with Acme Corp",
+      "contract_type": "MSA",
+      "status": "draft",
+      "value": "50000.00",
+      "counterparty": "Acme Corporation",
+      "start_date": "2026-01-15",
+      "end_date": "2027-01-14",
+      "created_by": "faacf775-cadc-4e26-939b-b8504c0eb9bd",
+      "created_at": "2026-01-12T07:06:27.383608Z",
+      "updated_at": "2026-01-12T07:06:27.383615Z"
+    }
+  ]
+}
+
+
+====================================================================================================
+✓ GET /api/contracts/?status=draft
+Status: 200
+Response:
+{
+  "count": 1,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": "a27bab38-080d-4cce-a2f7-10a5634e0005",
+      "tenant_id": "4d7a8bcb-783a-4926-b742-232ea84c79c7",
+      "title": "Service Agreement with Acme Corp",
+      "contract_type": "MSA",
+      "status": "draft",
+      "value": "50000.00",
+      "counterparty": "Acme Corporation",
+      "start_date": "2026-01-15",
+      "end_date": "2027-01-14",
+      "created_by": "faacf775-cadc-4e26-939b-b8504c0eb9bd",
+      "created_at": "2026-01-12T07:06:27.383608Z",
+      "updated_at": "2026-01-12T07:06:27.383615Z"
+    }
+  ]
+}
+
+
+====================================================================================================
+✓ GET /api/contracts/a27bab38-080d-4cce-a2f7-10a5634e0005/
+Status: 200
+Response:
+{
+  "id": "a27bab38-080d-4cce-a2f7-10a5634e0005",
+  "tenant_id": "4d7a8bcb-783a-4926-b742-232ea84c79c7",
+  "title": "Service Agreement with Acme Corp",
+  "contract_type": "MSA",
+  "status": "draft",
+  "value": "50000.00",
+  "counterparty": "Acme Corporation",
+  "start_date": "2026-01-15",
+  "end_date": "2027-01-14",
+  "is_approved": false,
+  "approved_by": null,
+  "approved_at": null,
+  "created_by": "faacf775-cadc-4e26-939b-b8504c0eb9bd",
+  "created_at": "2026-01-12T07:06:27.383608Z",
+  "updated_at": "2026-01-12T07:06:27.383615Z",
+  "latest_version": null
+}
+
+
+====================================================================================================
+✗ PUT /api/contracts/a27bab38-080d-4cce-a2f7-10a5634e0005/
+Status: 400
+Request Body:
+{
+  "status": "pending",
+  "value": 55000.0
+}
+
+Response:
+{
+  "title": [
+    "This field is required."
+  ]
+}
+
+
+====================================================================================================
+✓ POST /api/contracts/a27bab38-080d-4cce-a2f7-10a5634e0005/clone/
+Status: 201
+Request Body:
+{
+  "title": "Cloned Service Agreement"
+}
+
+Response:
+{
+  "id": "6fda235c-e72a-43fc-b065-696a3b654f8f",
+  "tenant_id": "4d7a8bcb-783a-4926-b742-232ea84c79c7",
+  "title": "Cloned Service Agreement",
+  "contract_type": "MSA",
+  "status": "draft",
+  "value": "50000.00",
+  "counterparty": "Acme Corporation",
+  "start_date": "2026-01-15",
+  "end_date": "2027-01-14",
+  "created_by": "faacf775-cadc-4e26-939b-b8504c0eb9bd",
+  "created_at": "2026-01-12T07:06:27.415537Z",
+  "updated_at": "2026-01-12T07:06:27.415545Z"
+}
+
+
+====================================================================================================
+✓ GET /api/contracts/statistics/
+Status: 200
+Response:
+{
+  "total": 2,
+  "draft": 2,
+  "pending": 0,
+  "approved": 0,
+  "rejected": 0,
+  "executed": 0,
+  "monthly_trends": [
+    {
+      "month": "Aug",
+      "approved": 0,
+      "rejected": 0
+    },
+    {
+      "month": "Sep",
+      "approved": 0,
+      "rejected": 0
+    },
+    {
+      "month": "Oct",
+      "approved": 0,
+      "rejected": 0
+    },
+    {
+      "month": "Nov",
+      "approved": 0,
+      "rejected": 0
+    },
+    {
+      "month": "Dec",
+      "approved": 0,
+      "rejected": 0
+    },
+    {
+      "month": "Jan",
+      "approved": 0,
+      "rejected": 0
+    }
+  ]
+}
+
+
+====================================================================================================
+✓ GET /api/contracts/recent/
+Status: 200
+Response:
+[
+  {
+    "id": "6fda235c-e72a-43fc-b065-696a3b654f8f",
+    "tenant_id": "4d7a8bcb-783a-4926-b742-232ea84c79c7",
+    "title": "Cloned Service Agreement",
+    "contract_type": "MSA",
+    "status": "draft",
+    "value": "50000.00",
+    "counterparty": "Acme Corporation",
+    "start_date": "2026-01-15",
+    "end_date": "2027-01-14",
+    "created_by": "faacf775-cadc-4e26-939b-b8504c0eb9bd",
+    "created_at": "2026-01-12T07:06:27.415537Z",
+    "updated_at": "2026-01-12T07:06:27.415545Z",
+    "created_by_name": "Test"
+  },
+  {
+    "id": "a27bab38-080d-4cce-a2f7-10a5634e0005",
+    "tenant_id": "4d7a8bcb-783a-4926-b742-232ea84c79c7",
+    "title": "Service Agreement with Acme Corp",
+    "contract_type": "MSA",
+    "status": "draft",
+    "value": "50000.00",
+    "counterparty": "Acme Corporation",
+    "start_date": "2026-01-15",
+    "end_date": "2027-01-14",
+    "created_by": "faacf775-cadc-4e26-939b-b8504c0eb9bd",
+    "created_at": "2026-01-12T07:06:27.383608Z",
+    "updated_at": "2026-01-12T07:06:27.383615Z",
+    "created_by_name": "Test"
+  }
+]
+
+
+====================================================================================================
+SECTION 3: CONTRACT TEMPLATES
+====================================================================================================
+
+====================================================================================================
+✓ POST /api/contract-templates/
+Status: 201
+Request Body:
+{
+  "name": "Standard NDA Template",
+  "contract_type": "NDA",
+  "r2_key": "templates/nda_2024.docx",
+  "description": "Standard NDA for vendor agreements",
+  "status": "draft",
+  "merge_fields": [
+    "company_name",
+    "date",
+    "parties"
+  ]
+}
+
+Response:
+{
+  "id": "ac0ee307-46b4-4112-833b-ce824eb2a274",
+  "tenant_id": "4d7a8bcb-783a-4926-b742-232ea84c79c7",
+  "name": "Standard NDA Template",
+  "contract_type": "NDA",
+  "description": "Standard NDA for vendor agreements",
+  "version": 1,
+  "status": "draft",
+  "r2_key": "templates/nda_2024.docx",
+  "merge_fields": [
+    "company_name",
+    "date",
+    "parties"
+  ],
+  "mandatory_clauses": [],
+  "business_rules": {},
+  "created_by": "faacf775-cadc-4e26-939b-b8504c0eb9bd",
+  "created_at": "2026-01-12T07:06:27.459172Z",
+  "updated_at": "2026-01-12T07:06:27.459187Z"
+}
+
+
+====================================================================================================
+✓ GET /api/contract-templates/
+Status: 200
+Response:
+{
+  "count": 0,
+  "next": null,
+  "previous": null,
+  "results": []
+}
+
+
+====================================================================================================
+✗ GET /api/contract-templates/ac0ee307-46b4-4112-833b-ce824eb2a274/
+Status: 404
+Response:
+{
+  "detail": "Not found."
+}
+
+
+====================================================================================================
+✗ PUT /api/contract-templates/ac0ee307-46b4-4112-833b-ce824eb2a274/
+Status: 404
+Request Body:
+{
+  "status": "published",
+  "description": "Updated NDA template"
+}
+
+Response:
+{
+  "detail": "Not found."
+}
+
+
+====================================================================================================
+SECTION 4: WORKFLOWS
+====================================================================================================
+
+====================================================================================================
+✓ POST /api/workflows/
+Status: 201
+Request Body:
+{
+  "name": "Contract Approval Workflow",
+  "description": "Multi-step approval process for contracts",
+  "status": "active",
+  "steps": [
+    {
+      "step_number": 1,
+      "name": "Initial Review",
+      "assigned_to": [
+        "role:manager"
+      ],
+      "required_approval": true
+    }
+  ]
+}
+
+Response:
+{
+  "id": "33ef5b97-f8c3-45e3-86a6-a2c5cc6fed21",
+  "tenant_id": "4d7a8bcb-783a-4926-b742-232ea84c79c7",
+  "name": "Contract Approval Workflow",
+  "description": "Multi-step approval process for contracts",
+  "workflow_type": "approval",
+  "status": "active",
+  "steps": [
+    {
+      "step_number": 1,
+      "name": "Initial Review",
+      "assigned_to": [
+        "role:manager"
+      ],
+      "required_approval": true
+    }
+  ],
+  "config": {},
+  "created_by": "faacf775-cadc-4e26-939b-b8504c0eb9bd",
+  "created_at": "2026-01-12T07:06:27.470953Z",
+  "updated_at": "2026-01-12T07:06:27.470961Z"
+}
+
+
+====================================================================================================
+✓ GET /api/workflows/
+Status: 200
+Response:
+{
+  "count": 11,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": "22c911d7-dcc3-4d4f-acee-e79c908fbf1f",
+      "tenant_id": "a253e2f0-73d2-4464-8818-9f0de36f4c08",
+      "name": "Test Workflow",
+      "description": "Test workflow for production testing",
+      "workflow_type": "approval",
+      "status": "draft",
+      "steps": [
+        {
+          "order": 1,
+          "action": "create_contract",
+          "description": "Create a contract"
+        },
+        {
+          "order": 2,
+          "action": "send_for_review",
+          "description": "Send for review"
+        },
+        {
+          "order": 3,
+          "action": "approve",
+          "description": "Approve contract"
+        }
+      ],
+      "config": {},
+      "created_by": "4eeb151b-9353-4fcf-bc65-7d4e0ffdcfcb",
+      "created_at": "2026-01-12T06:19:24.641456Z",
+      "updated_at": "2026-01-12T06:19:24.641464Z"
+    },
+    {
+      "id": "0ce01fa4-2a39-4a84-9db2-c0dff5b8c684",
+      "tenant_id": "943f03f0-58b3-432f-af37-4d83a6cd3191",
+      "name": "Test Workflow",
+      "description": "Test workflow description",
+      "workflow_type": "approval",
+      "status": "draft",
+      "steps": [],
+      "config": {},
+      "created_by": "642533af-9902-44ea-93ce-19744bf73fb3",
+      "created_at": "2026-01-12T06:39:52.699589Z",
+      "updated_at": "2026-01-12T06:39:52.699596Z"
+    },
+    {
+      "id": "2b6371b4-d6b8-49be-8a5f-1c601faa2e06",
+      "tenant_id": "be19f30c-e748-4d26-9cbc-757110b226fc",
+      "name": "Test Workflow",
+      "description": "Test workflow description",
+      "workflow_type": "approval",
+      "status": "draft",
+      "steps": [],
+      "config": {},
+      "created_by": "dc659640-6e18-40b3-92e1-88bde54f7f4f",
+      "created_at": "2026-01-12T06:41:23.265952Z",
+      "updated_at": "2026-01-12T06:41:23.265960Z"
+    },
+    {
+      "id": "aaad990c-ce3c-403a-a6be-0a3340c8f5f6",
+      "tenant_id": "debd737b-bf91-4141-99cb-45172c8593c8",
+      "name": "Workflow",
+      "description": "",
+      "workflow_type": "approval",
+      "status": "draft",
+      "steps": [],
+      "config": {},
+      "created_by": "69d5db7b-5ace-43ae-bbc3-d5daa7c27e3d",
+      "created_at": "2026-01-12T06:44:44.044146Z",
+      "updated_at": "2026-01-12T06:44:44.044156Z"
+    },
+    {
+      "id": "80ed3154-dc55-4a17-97dc-b9d56ef45edd",
+      "tenant_id": "9178e526-aded-4d23-88ad-48da9a199324",
+      "name": "Workflow",
+      "description": "",
+      "workflow_type": "approval",
+      "status": "draft",
+      "steps": [],
+      "config": {},
+      "created_by": "7cbffc0d-030e-460e-b906-9092c89cce1e",
+      "created_at": "2026-01-12T06:47:41.657372Z",
+      "updated_at": "2026-01-12T06:47:41.657380Z"
+    },
+    {
+      "id": "28f89e36-406c-4fc3-b947-6c43bf0bfe0f",
+      "tenant_id": "89645098-46e4-45fa-90ea-70e135af2f23",
+      "name": "Approval Flow",
+      "description": "",
+      "workflow_type": "approval",
+      "status": "draft",
+      "steps": [],
+      "config": {},
+      "created_by": "e924befe-f26e-4a5a-8668-4021e1ae786d",
+      "created_at": "2026-01-12T06:48:39.402712Z",
+      "updated_at": "2026-01-12T06:48:39.402721Z"
+    },
+    {
+      "id": "ae280bb6-824e-4e8a-a0ea-e21673b07308",
+      "tenant_id": "8c753e86-b84c-4a3d-9147-b29117973563",
+      "name": "Approval Flow",
+      "description": "",
+      "workflow_type": "approval",
+      "status": "draft",
+      "steps": [],
+      "config": {},
+      "created_by": "8b7deb89-abd9-43a6-8997-c0bfc8f17e19",
+      "created_at": "2026-01-12T06:48:53.954390Z",
+      "updated_at": "2026-01-12T06:48:53.954414Z"
+    },
+    {
+      "id": "dbecb5a3-9905-4724-898f-1734b9f48f8c",
+      "tenant_id": "48a481de-1ca9-46d6-96bc-29a035737e54",
+      "name": "Approval Flow",
+      "description": "",
+      "workflow_type": "approval",
+      "status": "draft",
+      "steps": [],
+      "config": {},
+      "created_by": "fa6fbe7b-ef40-43ed-ae59-eec158ad133d",
+      "created_at": "2026-01-12T06:52:51.863876Z",
+      "updated_at": "2026-01-12T06:52:51.863885Z"
+    },
+    {
+      "id": "0340d4b9-544a-4378-afec-83081afb7017",
+      "tenant_id": "50b3bd26-7a8d-433b-a46a-d41c1b4f9370",
+      "name": "Approval Flow",
+      "description": "",
+      "workflow_type": "approval",
+      "status": "draft",
+      "steps": [],
+      "config": {},
+      "created_by": "ace12b25-b846-4b0b-b334-06d4f0696bb6",
+      "created_at": "2026-01-12T06:54:19.393864Z",
+      "updated_at": "2026-01-12T06:54:19.393873Z"
+    },
+    {
+      "id": "f5f1adb4-234b-43d6-9ae0-9cd20f4ce5f4",
+      "tenant_id": "b91c8bd8-001a-423b-9850-5ca243eb89af",
+      "name": "Contract Approval Workflow",
+      "description": "Multi-step approval process for contracts",
+      "workflow_type": "approval",
+      "status": "active",
+      "steps": [
+        {
+          "name": "Initial Review",
+          "assigned_to": [
+            "role:manager"
+          ],
+          "step_number": 1,
+          "required_approval": true
+        }
+      ],
+      "config": {},
+      "created_by": "54cecdf3-9478-408e-9dab-dd5da0bef139",
+      "created_at": "2026-01-12T07:06:15.096904Z",
+      "updated_at": "2026-01-12T07:06:15.096917Z"
+    },
+    {
+      "id": "33ef5b97-f8c3-45e3-86a6-a2c5cc6fed21",
+      "tenant_id": "4d7a8bcb-783a-4926-b742-232ea84c79c7",
+      "name": "Contract Approval Workflow",
+      "description": "Multi-step approval process for contracts",
+      "workflow_type": "approval",
+      "status": "active",
+      "steps": [
+        {
+          "name": "Initial Review",
+          "assigned_to": [
+            "role:manager"
+          ],
+          "step_number": 1,
+          "required_approval": true
+        }
+      ],
+      "config": {},
+      "created_by": "faacf775-cadc-4e26-939b-b8504c0eb9bd",
+      "created_at": "2026-01-12T07:06:27.470953Z",
+      "updated_at": "2026-01-12T07:06:27.470961Z"
+    }
+  ]
+}
+
+
+====================================================================================================
+✓ GET /api/workflows/33ef5b97-f8c3-45e3-86a6-a2c5cc6fed21/
+Status: 200
+Response:
+{
+  "id": "33ef5b97-f8c3-45e3-86a6-a2c5cc6fed21",
+  "tenant_id": "4d7a8bcb-783a-4926-b742-232ea84c79c7",
+  "name": "Contract Approval Workflow",
+  "description": "Multi-step approval process for contracts",
+  "workflow_type": "approval",
+  "status": "active",
+  "steps": [
+    {
+      "name": "Initial Review",
+      "assigned_to": [
+        "role:manager"
+      ],
+      "step_number": 1,
+      "required_approval": true
+    }
+  ],
+  "config": {},
+  "created_by": "faacf775-cadc-4e26-939b-b8504c0eb9bd",
+  "created_at": "2026-01-12T07:06:27.470953Z",
+  "updated_at": "2026-01-12T07:06:27.470961Z"
+}
+
+
+====================================================================================================
+✗ PUT /api/workflows/33ef5b97-f8c3-45e3-86a6-a2c5cc6fed21/
+Status: 400
+Request Body:
+{
+  "status": "active",
+  "description": "Updated approval workflow"
+}
+
+Response:
+{
+  "name": [
+    "This field is required."
+  ]
+}
+
+
+====================================================================================================
+SECTION 5: APPROVALS
+====================================================================================================
+
+====================================================================================================
+✓ GET /api/approvals/
+Status: 200
+Response:
+{
+  "count": 0,
+  "next": null,
+  "previous": null,
+  "results": []
+}
+
+
+====================================================================================================
+✗ POST /api/contracts/a27bab38-080d-4cce-a2f7-10a5634e0005/approve/
+Status: ERROR
+Request Body:
+{
+  "reviewed": true,
+  "comments": "Contract approved after legal review"
+}
+
+Response:
+{
+  "error": "name 'ContractGenerationService' is not defined"
+}
+
+
+====================================================================================================
+SECTION 6: ADMIN PANEL
+====================================================================================================
+
+====================================================================================================
+✓ GET /api/roles/
+Status: 200
+Response:
+{
+  "roles": [
+    {
+      "id": "admin",
+      "name": "Administrator",
+      "description": "Full system access"
+    },
+    {
+      "id": "user",
+      "name": "User",
+      "description": "Standard user access"
+    },
+    {
+      "id": "viewer",
+      "name": "Viewer",
+      "description": "Read-only access"
+    },
+    {
+      "id": "manager",
+      "name": "Manager",
+      "description": "Team management access"
+    }
+  ]
+}
+
+
+====================================================================================================
+✓ GET /api/permissions/
+Status: 200
+Response:
+{
+  "permissions": [
+    {
+      "id": "view_contracts",
+      "name": "View Contracts",
+      "category": "Contracts"
+    },
+    {
+      "id": "create_contracts",
+      "name": "Create Contracts",
+      "category": "Contracts"
+    },
+    {
+      "id": "edit_contracts",
+      "name": "Edit Contracts",
+      "category": "Contracts"
+    },
+    {
+      "id": "delete_contracts",
+      "name": "Delete Contracts",
+      "category": "Contracts"
+    },
+    {
+      "id": "view_templates",
+      "name": "View Templates",
+      "category": "Templates"
+    },
+    {
+      "id": "create_templates",
+      "name": "Create Templates",
+      "category": "Templates"
+    },
+    {
+      "id": "view_users",
+      "name": "View Users",
+      "category": "Administration"
+    },
+    {
+      "id": "manage_users",
+      "name": "Manage Users",
+      "category": "Administration"
+    },
+    {
+      "id": "view_audit_logs",
+      "name": "View Audit Logs",
+      "category": "Administration"
+    }
+  ]
+}
+
+
+====================================================================================================
+✓ GET /api/users/
+Status: 200
+Response:
+{
+  "users": [
+    {
+      "id": "faacf775-cadc-4e26-939b-b8504c0eb9bd",
+      "email": "testuser@api.com",
+      "first_name": "Test",
+      "last_name": "",
+      "is_active": true,
+      "is_staff": false,
+      "date_joined": "2026-01-12T07:06:27.214295+00:00",
+      "last_login": "2026-01-12T07:06:27.376064+00:00"
+    }
+  ],
+  "total": 1
+}
+
+
+====================================================================================================
+✓ GET /api/admin/sla-rules/
+Status: 200
+Response:
+{
+  "sla_rules": [
+    {
+      "id": "sla-1",
+      "name": "Standard SLA",
+      "description": "Standard service level agreement",
+      "tenant_id": "4d7a8bcb-783a-4926-b742-232ea84c79c7",
+      "response_time": 24,
+      "resolution_time": 72,
+      "priority_levels": [
+        "Low",
+        "Medium",
+        "High",
+        "Critical"
+      ],
+      "created_at": "2026-01-12T07:06:27.537078+00:00",
+      "updated_at": "2026-01-12T07:06:27.537083+00:00"
+    },
+    {
+      "id": "sla-2",
+      "name": "Premium SLA",
+      "description": "Premium service level agreement",
+      "tenant_id": "4d7a8bcb-783a-4926-b742-232ea84c79c7",
+      "response_time": 4,
+      "resolution_time": 24,
+      "priority_levels": [
+        "Low",
+        "Medium",
+        "High",
+        "Critical"
+      ],
+      "created_at": "2026-01-12T07:06:27.537087+00:00",
+      "updated_at": "2026-01-12T07:06:27.537089+00:00"
+    }
+  ]
+}
+
+
+====================================================================================================
+✓ GET /api/admin/sla-breaches/
+Status: 200
+Response:
+{
+  "sla_breaches": [],
+  "total": 0
+}
+
+
+====================================================================================================
+✓ GET /api/admin/users/roles/
+Status: 200
+Response:
+{
+  "user_roles": [
+    {
+      "user_id": "faacf775-cadc-4e26-939b-b8504c0eb9bd",
+      "email": "testuser@api.com",
+      "name": "Test",
+      "roles": [
+        "user"
+      ],
+      "is_active": true,
+      "last_login": "2026-01-12T07:06:27.376064+00:00",
+      "date_joined": "2026-01-12T07:06:27.214295+00:00"
+    }
+  ]
+}
+
+
+====================================================================================================
+✓ GET /api/admin/tenants/
+Status: 200
+Response:
+{
+  "tenants": []
+}
+
+
+====================================================================================================
+SECTION 7: AUDIT LOGS & HISTORY
+====================================================================================================
+
+====================================================================================================
+✓ GET /api/audit-logs/
+Status: 200
+Response:
+{
+  "count": 0,
+  "next": null,
+  "previous": null,
+  "results": []
+}
+
+
+====================================================================================================
+✓ GET /api/audit-logs/stats/
+Status: 200
+Response:
+{
+  "total_logs": 0,
+  "last_24h": 0,
+  "by_action": {},
+  "by_entity": {}
+}
+
+
+====================================================================================================
+✗ GET /api/contracts/a27bab38-080d-4cce-a2f7-10a5634e0005/history/
+Status: 404
+Response:
+{
+  "status": "No JSON response",
+  "status_code": 404
+}
+
+
+====================================================================================================
+SECTION 8: SEARCH
+====================================================================================================
+
+====================================================================================================
+✓ GET /api/search/?q=contract
+Status: 200
+Response:
+[]
+
+
+====================================================================================================
+✓ GET /api/search/semantic/?q=agreement
+Status: 200
+Response:
+{
+  "query": "agreement",
+  "results": [],
+  "count": 0
+}
+
+
+====================================================================================================
+✓ POST /api/search/advanced/
+Status: 200
+Request Body:
+{
+  "query": "contract",
+  "filters": {
+    "status": "draft"
+  }
+}
+
+Response:
+[]
+
+
+====================================================================================================
+SECTION 9: NOTIFICATIONS
+====================================================================================================
+
+====================================================================================================
+✓ POST /api/notifications/
+Status: 201
+Request Body:
+{
+  "message": "Contract approval required",
+  "notification_type": "email",
+  "subject": "Contract Review Needed",
+  "body": "Please review the attached contract",
+  "recipient_id": "faacf775-cadc-4e26-939b-b8504c0eb9bd"
+}
+
+Response:
+{
+  "id": "cd94fee0-97dc-4050-add6-a95fa490a4a6",
+  "tenant_id": "4d7a8bcb-783a-4926-b742-232ea84c79c7",
+  "recipient_id": "faacf775-cadc-4e26-939b-b8504c0eb9bd",
+  "notification_type": "email",
+  "subject": "Contract Review Needed",
+  "body": "Please review the attached contract",
+  "status": "pending",
+  "created_at": "2026-01-12T07:06:27.561557Z",
+  "sent_at": null
+}
+
+
+====================================================================================================
+✓ GET /api/notifications/
+Status: 200
+Response:
+{
+  "count": 12,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": "95945bea-23be-4f0d-bfe3-f22c43dd3be0",
+      "tenant_id": "a253e2f0-73d2-4464-8818-9f0de36f4c08",
+      "recipient_id": "00000000-0000-0000-0000-000000000000",
+      "notification_type": "email",
+      "subject": "Test Notification",
+      "body": "This is a test notification",
+      "status": "pending",
+      "created_at": "2026-01-12T06:19:24.634430Z",
+      "sent_at": null
+    },
+    {
+      "id": "b43219d3-d943-4ac4-890e-e2d909c76f8c",
+      "tenant_id": "943f03f0-58b3-432f-af37-4d83a6cd3191",
+      "recipient_id": "642533af-9902-44ea-93ce-19744bf73fb3",
+      "notification_type": "email",
+      "subject": "Test Subject",
+      "body": "Test Body",
+      "status": "pending",
+      "created_at": "2026-01-12T06:39:52.631965Z",
+      "sent_at": null
+    },
+    {
+      "id": "49ef0fba-3b31-455a-9ad0-f5ac842446a3",
+      "tenant_id": "be19f30c-e748-4d26-9cbc-757110b226fc",
+      "recipient_id": "dc659640-6e18-40b3-92e1-88bde54f7f4f",
+      "notification_type": "email",
+      "subject": "Test Subject",
+      "body": "Test Body",
+      "status": "pending",
+      "created_at": "2026-01-12T06:41:23.237501Z",
+      "sent_at": null
+    },
+    {
+      "id": "9df1cf8a-2827-4570-8e52-6576d1a3b19a",
+      "tenant_id": "debd737b-bf91-4141-99cb-45172c8593c8",
+      "recipient_id": "69d5db7b-5ace-43ae-bbc3-d5daa7c27e3d",
+      "notification_type": "email",
+      "subject": "S",
+      "body": "B",
+      "status": "pending",
+      "created_at": "2026-01-12T06:44:44.025428Z",
+      "sent_at": null
+    },
+    {
+      "id": "15a61985-8c31-4a64-8580-e96631254b45",
+      "tenant_id": "9178e526-aded-4d23-88ad-48da9a199324",
+      "recipient_id": "7cbffc0d-030e-460e-b906-9092c89cce1e",
+      "notification_type": "email",
+      "subject": "S",
+      "body": "B",
+      "status": "pending",
+      "created_at": "2026-01-12T06:47:41.648473Z",
+      "sent_at": null
+    },
+    {
+      "id": "695ac42e-5bbd-4ebb-9401-4f3828cfd74c",
+      "tenant_id": "89645098-46e4-45fa-90ea-70e135af2f23",
+      "recipient_id": "e924befe-f26e-4a5a-8668-4021e1ae786d",
+      "notification_type": "email",
+      "subject": "Subj",
+      "body": "Body",
+      "status": "pending",
+      "created_at": "2026-01-12T06:48:39.369886Z",
+      "sent_at": null
+    },
+    {
+      "id": "0f3b8b0b-076f-446f-b3ed-672a76a1f43b",
+      "tenant_id": "8c753e86-b84c-4a3d-9147-b29117973563",
+      "recipient_id": "8b7deb89-abd9-43a6-8997-c0bfc8f17e19",
+      "notification_type": "email",
+      "subject": "Subj",
+      "body": "Body",
+      "status": "pending",
+      "created_at": "2026-01-12T06:48:53.938498Z",
+      "sent_at": null
+    },
+    {
+      "id": "1285c2da-c376-42ad-a7d9-7b79b6386f6b",
+      "tenant_id": "48a481de-1ca9-46d6-96bc-29a035737e54",
+      "recipient_id": "fa6fbe7b-ef40-43ed-ae59-eec158ad133d",
+      "notification_type": "email",
+      "subject": "Subj",
+      "body": "Body",
+      "status": "pending",
+      "created_at": "2026-01-12T06:52:51.786363Z",
+      "sent_at": null
+    },
+    {
+      "id": "7754fd12-420e-4f8f-9e2e-03c44a404318",
+      "tenant_id": "50b3bd26-7a8d-433b-a46a-d41c1b4f9370",
+      "recipient_id": "ace12b25-b846-4b0b-b334-06d4f0696bb6",
+      "notification_type": "email",
+      "subject": "Subj",
+      "body": "Body",
+      "status": "pending",
+      "created_at": "2026-01-12T06:54:19.336784Z",
+      "sent_at": null
+    },
+    {
+      "id": "c2679d2f-d0d4-4fd3-88bc-ec4423bcc791",
+      "tenant_id": "0e70900d-df46-4ce6-b8ee-480039713835",
+      "recipient_id": "5a6c05bd-0798-4ff6-a8f4-acbfbe31c1f6",
+      "notification_type": "email",
+      "subject": "Test",
+      "body": "Test message",
+      "status": "pending",
+      "created_at": "2026-01-12T07:04:06.378864Z",
+      "sent_at": null
+    },
+    {
+      "id": "effe56e1-1440-4d1f-9203-f8554c3d0c9c",
+      "tenant_id": "b91c8bd8-001a-423b-9850-5ca243eb89af",
+      "recipient_id": "54cecdf3-9478-408e-9dab-dd5da0bef139",
+      "notification_type": "email",
+      "subject": "Contract Review Needed",
+      "body": "Please review the attached contract",
+      "status": "pending",
+      "created_at": "2026-01-12T07:06:15.279095Z",
+      "sent_at": null
+    },
+    {
+      "id": "cd94fee0-97dc-4050-add6-a95fa490a4a6",
+      "tenant_id": "4d7a8bcb-783a-4926-b742-232ea84c79c7",
+      "recipient_id": "faacf775-cadc-4e26-939b-b8504c0eb9bd",
+      "notification_type": "email",
+      "subject": "Contract Review Needed",
+      "body": "Please review the attached contract",
+      "status": "pending",
+      "created_at": "2026-01-12T07:06:27.561557Z",
+      "sent_at": null
+    }
+  ]
+}
+
+
+====================================================================================================
+SECTION 10: DOCUMENTS & REPOSITORY
+====================================================================================================
+
+====================================================================================================
+✓ GET /api/documents/
+Status: 200
+Response:
+{
+  "documents": []
+}
+
+
+====================================================================================================
+✓ GET /api/repository/
+Status: 200
+Response:
+{
+  "count": 0,
+  "next": null,
+  "previous": null,
+  "results": []
+}
+
+
+====================================================================================================
+✓ GET /api/repository/folders/
+Status: 200
+Response:
+[]
+
+
+====================================================================================================
+✓ POST /api/repository/folders/
+Status: 201
+Request Body:
+{
+  "name": "Legal Documents",
+  "parent_id": null
+}
+
+Response:
+{
+  "message": "Folder created"
+}
+
+
+====================================================================================================
+SECTION 11: METADATA
+====================================================================================================
+
+====================================================================================================
+✓ POST /api/metadata/fields/
+Status: 201
+Request Body:
+{
+  "name": "contract_value",
+  "field_type": "number",
+  "description": "Total contract value in USD"
+}
+
+Response:
+{
+  "id": "f852395c-6557-405e-8f1f-43f945803212",
+  "tenant_id": "4d7a8bcb-783a-4926-b742-232ea84c79c7",
+  "name": "contract_value",
+  "field_type": "number",
+  "description": "Total contract value in USD",
+  "required": false,
+  "options": [],
+  "created_at": "2026-01-12T07:06:27.577450Z"
+}
+
+
+====================================================================================================
+✓ GET /api/metadata/fields/
+Status: 200
+Response:
+{
+  "count": 17,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": "50d82bf4-f5d8-4cc9-a3d7-03b353a77b4d",
+      "tenant_id": "a253e2f0-73d2-4464-8818-9f0de36f4c08",
+      "name": "Custom Department",
+      "field_type": "text",
+      "description": "Custom department field for testing",
+      "required": false,
+      "options": [],
+      "created_at": "2026-01-12T06:19:24.651184Z"
+    },
+    {
+      "id": "4d69ca8f-beed-48b5-aa89-a7483a883ca9",
+      "tenant_id": "943f03f0-58b3-432f-af37-4d83a6cd3191",
+      "name": "test_field",
+      "field_type": "text",
+      "description": "Test field",
+      "required": false,
+      "options": [],
+      "created_at": "2026-01-12T06:39:52.728107Z"
+    },
+    {
+      "id": "04683123-f47a-441f-ae54-bfca72b0d7d6",
+      "tenant_id": "be19f30c-e748-4d26-9cbc-757110b226fc",
+      "name": "test_field",
+      "field_type": "text",
+      "description": "Test field",
+      "required": false,
+      "options": [],
+      "created_at": "2026-01-12T06:41:23.274576Z"
+    },
+    {
+      "id": "1232880c-e0c3-4f0f-9ff2-2c6fa5087407",
+      "tenant_id": "debd737b-bf91-4141-99cb-45172c8593c8",
+      "name": "field",
+      "field_type": "text",
+      "description": "",
+      "required": false,
+      "options": [],
+      "created_at": "2026-01-12T06:44:44.091503Z"
+    },
+    {
+      "id": "d040f2cc-3a18-40f3-a443-1226691447e7",
+      "tenant_id": "9178e526-aded-4d23-88ad-48da9a199324",
+      "name": "field",
+      "field_type": "text",
+      "description": "",
+      "required": false,
+      "options": [],
+      "created_at": "2026-01-12T06:47:41.667971Z"
+    },
+    {
+      "id": "f4aa4f87-2d7c-4b5d-a9b9-e45f4e59ced2",
+      "tenant_id": "89645098-46e4-45fa-90ea-70e135af2f23",
+      "name": "contract_value",
+      "field_type": "number",
+      "description": "",
+      "required": false,
+      "options": [],
+      "created_at": "2026-01-12T06:48:39.411812Z"
+    },
+    {
+      "id": "9a17f13c-6c6f-42b1-aa46-ff02cbfc9e33",
+      "tenant_id": "89645098-46e4-45fa-90ea-70e135af2f23",
+      "name": "department",
+      "field_type": "text",
+      "description": "",
+      "required": false,
+      "options": [],
+      "created_at": "2026-01-12T06:48:39.417927Z"
+    },
+    {
+      "id": "df12f9bc-a0f1-48d3-8686-552b181a2ed5",
+      "tenant_id": "8c753e86-b84c-4a3d-9147-b29117973563",
+      "name": "contract_value",
+      "field_type": "number",
+      "description": "",
+      "required": false,
+      "options": [],
+      "created_at": "2026-01-12T06:48:53.966234Z"
+    },
+    {
+      "id": "511c9f3c-9a5f-4b27-ba5c-161276909928",
+      "tenant_id": "8c753e86-b84c-4a3d-9147-b29117973563",
+      "name": "department",
+      "field_type": "text",
+      "description": "",
+      "required": false,
+      "options": [],
+      "created_at": "2026-01-12T06:48:53.976262Z"
+    },
+    {
+      "id": "8eae0699-824e-414d-9600-3f4260701c70",
+      "tenant_id": "48a481de-1ca9-46d6-96bc-29a035737e54",
+      "name": "contract_value",
+      "field_type": "number",
+      "description": "",
+      "required": false,
+      "options": [],
+      "created_at": "2026-01-12T06:52:51.929136Z"
+    },
+    {
+      "id": "7de09c35-68a7-4436-b4ca-431cfe31731b",
+      "tenant_id": "48a481de-1ca9-46d6-96bc-29a035737e54",
+      "name": "department",
+      "field_type": "text",
+      "description": "",
+      "required": false,
+      "options": [],
+      "created_at": "2026-01-12T06:52:51.964957Z"
+    },
+    {
+      "id": "8c64e9f1-a97f-478b-bd25-9cf41edccfb5",
+      "tenant_id": "50b3bd26-7a8d-433b-a46a-d41c1b4f9370",
+      "name": "contract_value",
+      "field_type": "number",
+      "description": "",
+      "required": false,
+      "options": [],
+      "created_at": "2026-01-12T06:54:19.422676Z"
+    },
+    {
+      "id": "a048cf3d-a2bb-42b9-9586-67d274ebc29e",
+      "tenant_id": "50b3bd26-7a8d-433b-a46a-d41c1b4f9370",
+      "name": "department",
+      "field_type": "text",
+      "description": "",
+      "required": false,
+      "options": [],
+      "created_at": "2026-01-12T06:54:19.429382Z"
+    },
+    {
+      "id": "064fc9e6-bb58-42c1-a201-bf95b98a5389",
+      "tenant_id": "0e70900d-df46-4ce6-b8ee-480039713835",
+      "name": "contract_value",
+      "field_type": "number",
+      "description": "Contract value in USD",
+      "required": false,
+      "options": [],
+      "created_at": "2026-01-12T07:04:06.395979Z"
+    },
+    {
+      "id": "0fc04902-b21e-4a3f-aeac-e605bf7a93d0",
+      "tenant_id": "0e70900d-df46-4ce6-b8ee-480039713835",
+      "name": "department",
+      "field_type": "text",
+      "description": "Department name",
+      "required": false,
+      "options": [],
+      "created_at": "2026-01-12T07:04:06.404021Z"
+    },
+    {
+      "id": "470ab54a-43fb-443e-ab23-b9aae72b2ab3",
+      "tenant_id": "b91c8bd8-001a-423b-9850-5ca243eb89af",
+      "name": "contract_value",
+      "field_type": "number",
+      "description": "Total contract value in USD",
+      "required": false,
+      "options": [],
+      "created_at": "2026-01-12T07:06:15.328156Z"
+    },
+    {
+      "id": "f852395c-6557-405e-8f1f-43f945803212",
+      "tenant_id": "4d7a8bcb-783a-4926-b742-232ea84c79c7",
+      "name": "contract_value",
+      "field_type": "number",
+      "description": "Total contract value in USD",
+      "required": false,
+      "options": [],
+      "created_at": "2026-01-12T07:06:27.577450Z"
+    }
+  ]
+}
+
+
+====================================================================================================
+SECTION 12: HEALTH & MONITORING
+====================================================================================================
+
+====================================================================================================
+✓ GET /api/health/
+Status: 200
+Response:
+{
+  "status": "healthy",
+  "service": "CLM Backend"
+}
+
+
+====================================================================================================
+✓ GET /api/health/database/
+Status: 200
+Response:
+{
+  "status": "healthy",
+  "database": "connected"
+}
+
+
+====================================================================================================
+✓ GET /api/health/cache/
+Status: 200
+Response:
+{
+  "status": "healthy",
+  "cache": "connected"
+}
+
+
+====================================================================================================
+✓ GET /api/health/metrics/
+Status: 200
+Response:
+{
+  "uptime": "healthy",
+  "requests_processed": 10000,
+  "active_users": 50,
+  "response_time_ms": 150
+}
+
+
+====================================================================================================
+TEST EXECUTION SUMMARY
+====================================================================================================
+
+Total Endpoints Tested: 48
+Passed: 42 ✓
+Failed: 6 ✗
+Success Rate: 87.5%
+
+====================================================================================================
+END OF TEST REPORT
+====================================================================================================

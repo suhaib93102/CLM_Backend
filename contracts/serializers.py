@@ -9,7 +9,15 @@ class ContractTemplateSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContractTemplate
         fields = '__all__'
-        read_only_fields = ['id', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'tenant_id', 'created_by', 'created_at', 'updated_at']
+    
+    def create(self, validated_data):
+        # Auto-populate tenant_id and created_by from request context
+        if 'tenant_id' not in validated_data and self.context.get('request'):
+            validated_data['tenant_id'] = self.context['request'].user.tenant_id
+        if 'created_by' not in validated_data and self.context.get('request'):
+            validated_data['created_by'] = self.context['request'].user.user_id
+        return super().create(validated_data)
 
 
 class ClauseSerializer(serializers.ModelSerializer):

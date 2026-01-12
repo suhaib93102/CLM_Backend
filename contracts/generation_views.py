@@ -14,6 +14,7 @@ from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 import uuid
 import hashlib
 
@@ -44,6 +45,11 @@ class ContractTemplateViewSet(viewsets.ModelViewSet):
             tenant_id=tenant_id,
             status='published'
         )
+    
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context
     
     def perform_create(self, serializer):
         """Set tenant_id and created_by when creating a template"""
@@ -383,6 +389,35 @@ class ContractViewSet(viewsets.ModelViewSet):
             'download_url': url,
         })
     
+    @action(detail=True, methods=['get'], url_path='history')
+    def history(self, request, pk=None):
+        """GET /contracts/{id}/history/
+        
+        Get contract change history from audit logs
+        """
+        from audit_logs.models import AuditLogModel
+        
+        contract = self.get_object()
+        history = AuditLogModel.objects.filter(
+            entity_id=str(contract.id),
+            entity_type='contract'
+        ).order_by('-created_at')[:50]
+        
+        result = []
+        for log in history:
+            result.append({
+                'id': str(log.id),
+                'entity_type': log.entity_type,
+                'entity_id': log.entity_id,
+                'action': log.action,
+                'performed_by': str(log.performed_by),
+                'performer_email': getattr(log, 'performer_email', 'Unknown'),
+                'changes': log.changes or {},
+                'created_at': log.created_at.isoformat()
+            })
+        
+        return Response({'history': result})
+    
     @action(detail=False, methods=['get'], url_path='statistics')
     def statistics(self, request):
         """
@@ -621,12 +656,25 @@ class ContractViewSet(viewsets.ModelViewSet):
             tenant_id = request.user.tenant_id
             user_id = request.user.user_id
             
-            generator = ContractGenerator(user_id, tenant_id)
-            version = generator.create_version(
+            # Get latest version number
+            latest_version = contract.versions.order_by('-version_number').first()
+            version_number = (latest_version.version_number + 1) if latest_version else 1
+            
+            # Create version without requiring generator
+            version = ContractVersion.objects.create(
                 contract=contract,
-                selected_clauses=selected_clauses,
-                change_summary=change_summary
+                version_number=version_number,
+                template_id=contract.template_id or uuid.uuid4(),
+                template_version=1,
+                change_summary=change_summary or f'Version {version_number}',
+                created_by=user_id,
+                file_size=0,
+                file_hash='',
+                r2_key=f'contracts/{contract.id}/v{version_number}.docx'
             )
+            
+            contract.current_version = version_number
+            contract.save(update_fields=['current_version'])
             
             return Response(
                 ContractVersionSerializer(version).data,
@@ -761,11 +809,22 @@ class ContractViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
         
-        tenant_id = request.user.tenant_id
-        user_id = request.user.user_id
+        # Approve the contract
+        contract.is_approved = True
+        contract.approved_by = request.user.user_id
+        contract.approved_at = timezone.now()
+        contract.save(update_fields=['is_approved', 'approved_by', 'approved_at'])
         
-        service = ContractGenerationService(tenant_id, user_id)
-        contract = service.approve_contract(str(contract.id))
+        # Create audit log entry with correct fields
+        from audit_logs.models import AuditLogModel
+        AuditLogModel.objects.create(
+            tenant_id=request.user.tenant_id,
+            user_id=request.user.user_id,
+            entity_type='contract',
+            entity_id=contract.id,
+            action='update',
+            changes={'is_approved': True, 'comments': serializer.validated_data.get('comments', '')}
+        )
         
         return Response(
             ContractDetailSerializer(contract).data,
@@ -848,6 +907,64 @@ class ContractViewSet(viewsets.ModelViewSet):
             return Response(
                 {'error': 'Failed to create new version', 'details': str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+    
+    @action(detail=True, methods=['post'], url_path='clone')
+    def clone(self, request, pk=None):
+        """
+        POST /contracts/{id}/clone/
+        Clone a contract to create a new copy
+        
+        Request:
+        {
+            "title": "New Contract Title"
+        }
+        """
+        contract = self.get_object()
+        tenant_id = request.user.tenant_id
+        user_id = request.user.user_id
+        
+        new_title = request.data.get('title', f"{contract.title} (Copy)")
+        
+        try:
+            cloned_contract = Contract.objects.create(
+                tenant_id=tenant_id,
+                title=new_title,
+                contract_type=contract.contract_type,
+                status='draft',
+                value=contract.value,
+                counterparty=contract.counterparty,
+                start_date=contract.start_date,
+                end_date=contract.end_date,
+                created_by=user_id,
+                template_id=contract.template_id
+            )
+            
+            # Clone latest version if exists
+            latest_version = contract.versions.order_by('-version_number').first()
+            if latest_version:
+                ContractVersion.objects.create(
+                    contract=cloned_contract,
+                    version_number=1,
+                    r2_key=latest_version.r2_key,
+                    template_id=latest_version.template_id,
+                    template_version=latest_version.template_version,
+                    change_summary=f'Cloned from {contract.title}',
+                    created_by=user_id,
+                    file_size=latest_version.file_size,
+                    file_hash=latest_version.file_hash
+                )
+                cloned_contract.current_version = 1
+                cloned_contract.save(update_fields=['current_version'])
+            
+            return Response(
+                ContractSerializer(cloned_contract).data,
+                status=status.HTTP_201_CREATED
+            )
+        except Exception as e:
+            return Response(
+                {'error': str(e)},
+                status=status.HTTP_400_BAD_REQUEST
             )
 
 

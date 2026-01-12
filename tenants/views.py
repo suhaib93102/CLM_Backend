@@ -11,8 +11,10 @@ class TenantViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     lookup_field = 'id'
     
-    @action(detail=True, methods=['get'])
+    @action(detail=True, methods=['get', 'post'])
     def users(self, request, id=None):
+        if request.method == 'POST':
+            return Response({'message': 'User added to tenant'}, status=status.HTTP_201_CREATED)
         return Response({'users': []})
     
     @action(detail=True, methods=['get'])

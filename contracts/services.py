@@ -1,13 +1,3 @@
-"""
-Contract Generation Service
-
-Handles template-based contract generation with:
-- DOCX template processing
-- Merge field replacement
-- Clause assembly
-- Version management
-- Business rule validation
-"""
 import uuid
 import hashlib
 from datetime import datetime
@@ -25,22 +15,8 @@ from .models import (
 
 
 class RuleEngine:
-    """
-    Business rule evaluation engine
-    """
-    
     @staticmethod
     def evaluate_condition(condition: Dict, context: Dict) -> bool:
-        """
-        Evaluate a single condition against context data
-        
-        Conditions format:
-        {
-            "contract_value__gte": 10000000,
-            "contract_type": "MSA",
-            "start_date__year": 2026
-        }
-        """
         for key, expected_value in condition.items():
             if '__' in key:
                 field, operator = key.rsplit('__', 1)
@@ -62,7 +38,6 @@ class RuleEngine:
                 elif operator == 'contains' and expected_value not in actual_value:
                     return False
             else:
-                # Direct equality check
                 if context.get(key) != expected_value:
                     return False
         
@@ -70,9 +45,6 @@ class RuleEngine:
     
     @classmethod
     def get_mandatory_clauses(cls, tenant_id: uuid.UUID, contract_type: str, context: Dict) -> List[Dict]:
-        """
-        Get list of mandatory clauses based on business rules
-        """
         rules = BusinessRule.objects.filter(
             tenant_id=tenant_id,
             rule_type='mandatory_clause',
@@ -94,10 +66,6 @@ class RuleEngine:
     
     @classmethod
     def get_clause_suggestions(cls, tenant_id: uuid.UUID, contract_type: str, context: Dict, clause_id: str) -> List[Dict]:
-        """
-        Get alternative clause suggestions based on rules
-        """
-        # First get the clause and its predefined alternatives
         try:
             clause = Clause.objects.get(
                 tenant_id=tenant_id,
@@ -109,7 +77,6 @@ class RuleEngine:
         
         suggestions = []
         
-        # Evaluate predefined alternatives
         for alt in clause.alternatives:
             trigger_rules = alt.get('trigger_rules', {})
             if not trigger_rules or cls.evaluate_condition(trigger_rules, context):
@@ -120,7 +87,6 @@ class RuleEngine:
                     'source': 'predefined'
                 })
         
-        # Check dynamic business rules for suggestions
         rules = BusinessRule.objects.filter(
             tenant_id=tenant_id,
             rule_type='clause_suggestion',
@@ -147,13 +113,11 @@ class RuleEngine:
         """
         errors = []
         
-        # Check mandatory clauses
         mandatory = cls.get_mandatory_clauses(tenant_id, contract_type, context)
         for req in mandatory:
             if req['clause_id'] not in selected_clauses:
                 errors.append(f"Mandatory clause missing: {req['clause_id']} - {req['message']}")
         
-        # Check validation rules
         rules = BusinessRule.objects.filter(
             tenant_id=tenant_id,
             rule_type='validation',
@@ -171,10 +135,6 @@ class RuleEngine:
 
 
 class ContractGenerator:
-    """
-    Contract generation from templates with clause assembly
-    """
-    
     def __init__(self, user_id: uuid.UUID, tenant_id: uuid.UUID):
         self.user_id = user_id
         self.tenant_id = tenant_id
@@ -187,18 +147,6 @@ class ContractGenerator:
         user_instructions: Optional[str] = None,
         title: Optional[str] = None
     ) -> Contract:
-        """
-        Generate a new contract from a template
-        
-        Args:
-            template_id: Template to use
-            structured_inputs: Form data for merge fields
-            user_instructions: Optional free-text instructions
-            title: Contract title
-        
-        Returns:
-            Created Contract instance
-        """
         template = ContractTemplate.objects.get(
             id=template_id,
             tenant_id=self.tenant_id,
@@ -222,7 +170,6 @@ class ContractGenerator:
             current_version=1
         )
         
-        # Log creation
         WorkflowLog.objects.create(
             contract=contract,
             action='created',
@@ -238,17 +185,6 @@ class ContractGenerator:
         selected_clauses: Optional[List[str]] = None,
         change_summary: Optional[str] = None
     ) -> ContractVersion:
-        """
-        Create a new version of a contract with selected clauses
-        
-        Args:
-            contract: Contract instance
-            selected_clauses: List of clause IDs to include (None = use template defaults)
-            change_summary: Summary of changes
-        
-        Returns:
-            Created ContractVersion with assembled document
-        """
         template = contract.template
         context = {
             'contract_type': contract.contract_type,
@@ -257,9 +193,7 @@ class ContractGenerator:
             **contract.form_inputs
         }
         
-        # Determine which clauses to include
         if selected_clauses is None:
-            # Use template defaults + mandatory clauses
             selected_clauses = list(template.mandatory_clauses)
             mandatory = self.rule_engine.get_mandatory_clauses(
                 self.tenant_id, 
@@ -270,7 +204,6 @@ class ContractGenerator:
                 if req['clause_id'] not in selected_clauses:
                     selected_clauses.append(req['clause_id'])
         
-        # Validate
         is_valid, errors = self.rule_engine.validate_contract(
             self.tenant_id,
             contract.contract_type,
@@ -281,19 +214,15 @@ class ContractGenerator:
         if not is_valid:
             raise ValidationError({"clauses": errors})
         
-        # Create document
         doc = self._create_document(contract, selected_clauses, context)
         
-        # Save to BytesIO
         doc_bytes = BytesIO()
         doc.save(doc_bytes)
         doc_bytes.seek(0)
         
-        # Calculate hash
         content = doc_bytes.getvalue()
         file_hash = hashlib.sha256(content).hexdigest()
         
-        # Create version
         version_number = contract.current_version
         version = ContractVersion.objects.create(
             contract=contract,
@@ -307,14 +236,11 @@ class ContractGenerator:
             r2_key=f'contracts/{contract.id}/v{version_number}.docx'
         )
         
-        # Store clause provenance
         self._store_clause_provenance(version, selected_clauses, context)
         
-        # Update contract version
         contract.current_version = version_number + 1
         contract.save()
         
-        # Log version creation
         WorkflowLog.objects.create(
             contract=contract,
             action='version_created',
@@ -323,21 +249,11 @@ class ContractGenerator:
             metadata={'clause_count': len(selected_clauses)}
         )
         
-        # TODO: Upload to R2 storage
-        # For now, we'll store the path only
-        
         return version
     
     def _create_document(self, contract: Contract, clause_ids: List[str], context: Dict) -> Document:
-        """
-        Create DOCX document by assembling clauses
-        """
         doc = Document()
-        
-        # Add header
         doc.add_heading(contract.title, 0)
-        
-        # Add contract metadata
         p = doc.add_paragraph()
         p.add_run(f"Contract Type: ").bold = True
         p.add_run(f"{contract.contract_type}\n")
@@ -348,10 +264,8 @@ class ContractGenerator:
             p.add_run(f"${contract.value:,.2f}\n")
         p.add_run(f"Created: ").bold = True
         p.add_run(f"{contract.created_at.strftime('%Y-%m-%d')}\n")
+        doc.add_paragraph()  
         
-        doc.add_paragraph()  # Spacing
-        
-        # Add clauses in order
         clauses = Clause.objects.filter(
             tenant_id=self.tenant_id,
             clause_id__in=clause_ids,
@@ -359,26 +273,17 @@ class ContractGenerator:
         ).order_by('clause_id')
         
         for i, clause in enumerate(clauses, 1):
-            # Clause heading
             heading = doc.add_heading(f"{i}. {clause.name}", level=2)
-            
-            # Clause content with merge field replacement
             content = self._replace_merge_fields(clause.content, context)
             doc.add_paragraph(content)
-            
-            # Add provenance comment (metadata)
             provenance = doc.add_paragraph()
             provenance.add_run(f"[Clause ID: {clause.clause_id} v{clause.version}]").font.size = Pt(8)
             provenance.runs[0].font.color.rgb = RGBColor(128, 128, 128)
-            
-            doc.add_paragraph()  # Spacing
+            doc.add_paragraph() 
         
         return doc
     
     def _replace_merge_fields(self, text: str, context: Dict) -> str:
-        """
-        Replace {{field_name}} with actual values
-        """
         result = text
         for key, value in context.items():
             placeholder = f"{{{{{key}}}}}"
@@ -387,9 +292,6 @@ class ContractGenerator:
         return result
     
     def _store_clause_provenance(self, version: ContractVersion, clause_ids: List[str], context: Dict):
-        """
-        Store clause provenance in contract_clauses table
-        """
         clauses = Clause.objects.filter(
             tenant_id=self.tenant_id,
             clause_id__in=clause_ids,
@@ -397,7 +299,6 @@ class ContractGenerator:
         ).order_by('clause_id')
         
         for position, clause in enumerate(clauses, 1):
-            # Get alternatives for this clause
             alternatives = self.rule_engine.get_clause_suggestions(
                 self.tenant_id,
                 version.contract.contract_type,

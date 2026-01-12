@@ -13,13 +13,18 @@ class OCRViewSet(viewsets.ModelViewSet):
     
     @action(detail=False, methods=['post'])
     def process(self, request):
-        document_id = request.data.get('document_id')
-        job = OCRJobModel.objects.create(
-            tenant_id=request.user.tenant_id,
-            document_id=document_id,
-            status='processing'
-        )
-        return Response(OCRJobSerializer(job).data, status=status.HTTP_201_CREATED)
+        try:
+            document_id = request.data.get('document_id')
+            if not document_id:
+                return Response({'error': 'document_id required'}, status=status.HTTP_400_BAD_REQUEST)
+            job = OCRJobModel.objects.create(
+                tenant_id=request.user.tenant_id,
+                document_id=document_id,
+                status='processing'
+            )
+            return Response(OCRJobSerializer(job).data, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
     
     @action(detail=True, methods=['get'])
     def status(self, request, id=None):

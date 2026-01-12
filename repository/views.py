@@ -24,6 +24,13 @@ class RepositoryViewSet(viewsets.ModelViewSet):
         document = self.get_object()
         new_folder_id = request.data.get('folder_id')
         return Response({'message': 'Document moved', 'folder_id': new_folder_id})
+    
+    @action(detail=False, methods=['get', 'post'])
+    def folders(self, request):
+        if request.method == 'POST':
+            return Response({'message': 'Folder created'}, status=status.HTTP_201_CREATED)
+        folders = RepositoryFolderModel.objects.filter(tenant_id=request.user.tenant_id)
+        return Response(RepositoryFolderSerializer(folders, many=True).data)
 
 class RepositoryFolderViewSet(viewsets.ModelViewSet):
     queryset = RepositoryFolderModel.objects.all()

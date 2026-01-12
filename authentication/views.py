@@ -1,99 +1,52 @@
 """
-Authentication views
+Authentication views with real OTP implementation
 """
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework import status
-import jwt
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 import secrets
-from datetime import datetime, timedelta
+from datetime import timedelta
 from django.conf import settings
 from django.core.mail import send_mail
 from django.utils import timezone
 from .models import User
+from .otp_service import OTPService
 
 
 class TokenView(APIView):
-    """
-    POST /api/auth/login/
-    Authenticate user and generate JWT token
-    """
+    """POST /api/auth/login/ - Authenticate user and generate JWT token"""
     permission_classes = [AllowAny]
     
     def post(self, request):
-        from rest_framework_simplejwt.tokens import RefreshToken
-        
-        email = request.data.get('email', '')
+        email = request.data.get('email', '').strip().lower()
         password = request.data.get('password', '')
         
         if not email or not password:
-            return Response(
-                {'error': 'Email and password are required'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({'error': 'Email and password required'}, status=status.HTTP_400_BAD_REQUEST)
         
         try:
             user = User.objects.get(email=email, is_active=True)
+            if not user.check_password(password):
+                return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
         except User.DoesNotExist:
-            return Response(
-                {'error': 'Invalid credentials'},
-                status=status.HTTP_401_UNAUTHORIZED
-            )
+            return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
         
-        # Verify password
-        if not user.check_password(password):
-            return Response(
-                {'error': 'Invalid credentials'},
-                status=status.HTTP_401_UNAUTHORIZED
-            )
-        
-        # Generate JWT tokens using SimpleJWT
         refresh = RefreshToken.for_user(user)
+        user.last_login = timezone.now()
+        user.save(update_fields=['last_login'])
         
         return Response({
             'access': str(refresh.access_token),
             'refresh': str(refresh),
-            'user': {
-                'user_id': str(user.user_id),
-                'email': user.email,
-                'first_name': user.first_name,
-                'last_name': user.last_name,
-                'tenant_id': str(user.tenant_id),
-                'is_staff': user.is_staff
-            }
-        })
-
-
-class CurrentUserView(APIView):
-    """
-    GET /api/v1/auth/me/
-    Returns current user information with tenant context
-    """
-    permission_classes = [IsAuthenticated]
-    
-    def get(self, request):
-        user = request.user
-        
-        if not hasattr(user, 'user_id'):
-            return Response(
-                {'error': 'Invalid authentication'},
-                status=status.HTTP_401_UNAUTHORIZED
-            )
-        
-        return Response({
-            'user_id': user.user_id,
-            'email': user.email,
-            'tenant_id': user.tenant_id,
-            'is_staff': user.is_staff
-        })
+            'user': {'user_id': str(user.user_id), 'email': user.email, 'tenant_id': str(user.tenant_id)}
+        }, status=status.HTTP_200_OK)
 
 
 class RegisterView(APIView):
-    """
-    POST /api/v1/auth/register/
-    Register a new user
-    """
+    """POST /api/auth/register/ - Register new user"""
     permission_classes = [AllowAny]
     
     def post(self, request):
@@ -101,318 +54,195 @@ class RegisterView(APIView):
         password = request.data.get('password', '')
         full_name = request.data.get('full_name', '').strip()
         
-        # Validation
         if not email or not password:
-            return Response(
-                {'error': 'Email and password are required'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        
+            return Response({'error': 'Email and password required'}, status=status.HTTP_400_BAD_REQUEST)
         if len(password) < 6:
-            return Response(
-                {'error': 'Password must be at least 6 characters'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        
-        # Check if user already exists
+            return Response({'error': 'Password minimum 6 chars'}, status=status.HTTP_400_BAD_REQUEST)
         if User.objects.filter(email=email).exists():
-            return Response(
-                {'error': 'User with this email already exists'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({'error': 'User exists'}, status=status.HTTP_400_BAD_REQUEST)
         
-        # Create new user and assign to a tenant
-        # In production, you'd have proper tenant assignment logic
         import uuid
-        tenant_id = uuid.uuid4()
-        
-        user = User(
-            email=email,
-            first_name=full_name.split()[0] if full_name else '',
-            last_name=' '.join(full_name.split()[1:]) if full_name and len(full_name.split()) > 1 else '',
-            tenant_id=tenant_id,
-            is_active=True,
-            is_staff=False,
-            is_superuser=False
-        )
+        user = User(email=email, first_name=full_name.split()[0] if full_name else '', tenant_id=uuid.uuid4(), is_active=True)
         user.set_password(password)
         user.save()
         
-        # Generate JWT tokens using SimpleJWT
-        from rest_framework_simplejwt.tokens import RefreshToken
         refresh = RefreshToken.for_user(user)
+        return Response({'access': str(refresh.access_token), 'refresh': str(refresh), 'user': {'user_id': str(user.user_id), 'email': user.email}}, status=status.HTTP_201_CREATED)
+
+
+class CurrentUserView(APIView):
+    """GET /api/auth/me/ - Get current user"""
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request):
+        user = request.user
+        return Response({'user_id': str(user.user_id), 'email': user.email, 'tenant_id': str(user.tenant_id)}, status=status.HTTP_200_OK)
+
+
+class LogoutView(APIView):
+    """POST /api/auth/logout/ - Logout"""
+    permission_classes = [IsAuthenticated]
+    
+    def post(self, request):
+        return Response({'message': 'Logged out'}, status=status.HTTP_200_OK)
+
+
+class RefreshTokenView(APIView):
+    """POST /api/auth/refresh/ - Refresh token"""
+    permission_classes = [AllowAny]
+    
+    def post(self, request):
+        refresh_token = request.data.get('refresh', '')
+        if not refresh_token:
+            return Response({'error': 'Refresh token required'}, status=status.HTTP_400_BAD_REQUEST)
         
-        return Response({
-            'message': 'User created successfully',
-            'access': str(refresh.access_token),
-            'refresh': str(refresh),
-            'user': {
-                'user_id': str(user.user_id),
-                'email': user.email,
-                'first_name': user.first_name,
-                'last_name': user.last_name,
-                'tenant_id': str(user.tenant_id),
-                'is_staff': user.is_staff
-            }
-        }, status=status.HTTP_201_CREATED)
+        try:
+            refresh = RefreshToken(refresh_token)
+            return Response({'access': str(refresh.access_token), 'refresh': str(refresh)}, status=status.HTTP_200_OK)
+        except (InvalidToken, TokenError):
+            return Response({'error': 'Invalid token'}, status=status.HTTP_401_UNAUTHORIZED)
 
 
-class ForgotPasswordView(APIView):
-    """
-    POST /api/v1/auth/forgot-password/
-    Request password reset token
-    """
+class RequestLoginOTPView(APIView):
+    """POST /api/auth/request-login-otp/ - Request login OTP"""
     permission_classes = [AllowAny]
     
     def post(self, request):
         email = request.data.get('email', '').strip().lower()
-        
         if not email:
-            return Response(
-                {'error': 'Email is required'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({'error': 'Email required'}, status=status.HTTP_400_BAD_REQUEST)
         
         try:
             user = User.objects.get(email=email, is_active=True)
+            otp = OTPService.generate_otp()
+            user.login_otp = otp
+            user.otp_created_at = timezone.now()
+            user.otp_attempts = 0
+            user.save(update_fields=['login_otp', 'otp_created_at', 'otp_attempts'])
+            OTPService.send_login_otp(user, otp)
         except User.DoesNotExist:
-            # Don't reveal if email exists for security
-            return Response({
-                'message': 'If the email exists, a password reset link has been sent'
-            })
+            pass
         
-        # Generate reset token
-        reset_token = secrets.token_urlsafe(32)
-        user.reset_token = reset_token
-        user.reset_token_expiry = timezone.now() + timedelta(hours=1)
-        user.save()
-        
-        # In production, send email with reset link
-        # For now, we'll return the token in the response for testing
-        reset_link = f"http://localhost:3000/#reset?token={reset_token}"
-        
-        # TODO: Send email
-        # send_mail(
-        #     'Password Reset Request',
-        #     f'Click this link to reset your password: {reset_link}',
-        #     'noreply@clm.com',
-        #     [email],
-        #     fail_silently=False,
-        # )
-        
-        return Response({
-            'message': 'If the email exists, a password reset link has been sent',
-            'reset_token': reset_token,  # Remove in production
-            'reset_link': reset_link  # Remove in production
-        })
+        return Response({'message': 'OTP sent if email exists'}, status=status.HTTP_200_OK)
 
 
-class ResetPasswordView(APIView):
-    """
-    POST /api/v1/auth/reset-password/
-    Reset password using token
-    """
+class VerifyEmailOTPView(APIView):
+    """POST /api/auth/verify-email-otp/ - Verify login OTP"""
     permission_classes = [AllowAny]
     
     def post(self, request):
-        token = request.data.get('token', '')
-        new_password = request.data.get('new_password', '') or request.data.get('password', '')
-        
-        if not token or not new_password:
-            return Response(
-                {'error': 'Token and new password are required'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        
-        if len(new_password) < 6:
-            return Response(
-                {'error': 'Password must be at least 6 characters'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        
-        try:
-            user = User.objects.get(
-                reset_token=token,
-                reset_token_expiry__gt=timezone.now(),
-                is_active=True
-            )
-        except User.DoesNotExist:
-            return Response(
-                {'error': 'Invalid or expired reset token'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        
-        # Update password
-        user.set_password(new_password)
-        user.reset_token = None
-        user.reset_token_expiry = None
-        user.save()
-        
-        return Response({
-            'message': 'Password reset successfully'
-        })
-
-
-class LogoutView(APIView):
-    """
-    POST /api/v1/auth/logout/
-    Logout user (invalidate token)
-    """
-    permission_classes = [IsAuthenticated]
-    
-    def post(self, request):
-        return Response({
-            'message': 'Logged out successfully'
-        })
-
-
-class RefreshTokenView(APIView):
-    """
-    POST /api/v1/auth/refresh/
-    Refresh JWT token using refresh token
-    """
-    permission_classes = [AllowAny]
-    
-    def post(self, request):
-        from rest_framework_simplejwt.tokens import RefreshToken
-        from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
-        
-        refresh_token = request.data.get('refresh', '')
-        
-        if not refresh_token:
-            return Response(
-                {'error': 'Refresh token is required'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        
-        try:
-            refresh = RefreshToken(refresh_token)
-            return Response({
-                'access': str(refresh.access_token),
-                'refresh': str(refresh)
-            })
-        except (InvalidToken, TokenError) as e:
-            return Response(
-                {'error': 'Invalid refresh token'},
-                status=status.HTTP_401_UNAUTHORIZED
-            )
-
-class VerifyPasswordResetOTPView(APIView):
-    """
-    POST /api/auth/verify-password-reset-otp/
-    Verify password reset OTP
-    """
-    permission_classes = [AllowAny]
-    
-    def post(self, request):
-        email = request.data.get('email', '')
-        otp = request.data.get('otp', '')
+        email = request.data.get('email', '').strip().lower()
+        otp = request.data.get('otp', '').strip()
         
         if not email or not otp:
             return Response({'error': 'Email and OTP required'}, status=status.HTTP_400_BAD_REQUEST)
         
         try:
-            user = User.objects.get(email=email)
-            if hasattr(user, 'password_reset_otp') and user.password_reset_otp == otp:
-                return Response({'message': 'OTP verified successfully', 'verified': True})
-            return Response({'error': 'Invalid OTP'}, status=status.HTTP_400_BAD_REQUEST)
+            user = User.objects.get(email=email, is_active=True)
+            is_valid, msg = OTPService.verify_otp(user, otp, 'login')
+            if not is_valid:
+                return Response({'error': msg}, status=status.HTTP_400_BAD_REQUEST)
+            
+            OTPService.clear_otp(user, 'login')
+            refresh = RefreshToken.for_user(user)
+            user.last_login = timezone.now()
+            user.save(update_fields=['last_login'])
+            
+            return Response({'access': str(refresh.access_token), 'refresh': str(refresh), 'user': {'user_id': str(user.user_id), 'email': user.email}}, status=status.HTTP_200_OK)
+        except User.DoesNotExist:
+            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+
+
+class ForgotPasswordView(APIView):
+    """POST /api/auth/forgot-password/ - Request password reset"""
+    permission_classes = [AllowAny]
+    
+    def post(self, request):
+        email = request.data.get('email', '').strip().lower()
+        if not email:
+            return Response({'error': 'Email required'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            user = User.objects.get(email=email, is_active=True)
+            otp = OTPService.generate_otp()
+            user.password_reset_otp = otp
+            user.otp_created_at = timezone.now()
+            user.otp_attempts = 0
+            user.save(update_fields=['password_reset_otp', 'otp_created_at', 'otp_attempts'])
+            OTPService.send_password_reset_otp(user, otp)
+        except User.DoesNotExist:
+            pass
+        
+        return Response({'message': 'Reset OTP sent if email exists'}, status=status.HTTP_200_OK)
+
+
+class VerifyPasswordResetOTPView(APIView):
+    """POST /api/auth/verify-password-reset-otp/ - Verify reset OTP"""
+    permission_classes = [AllowAny]
+    
+    def post(self, request):
+        email = request.data.get('email', '').strip().lower()
+        otp = request.data.get('otp', '').strip()
+        
+        if not email or not otp:
+            return Response({'error': 'Email and OTP required'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            user = User.objects.get(email=email, is_active=True)
+            is_valid, msg = OTPService.verify_otp(user, otp, 'password_reset')
+            if not is_valid:
+                return Response({'error': msg}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'message': 'OTP verified', 'verified': True}, status=status.HTTP_200_OK)
         except User.DoesNotExist:
             return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
 class ResendPasswordResetOTPView(APIView):
-    """
-    POST /api/auth/resend-password-reset-otp/
-    Resend password reset OTP
-    """
+    """POST /api/auth/resend-password-reset-otp/ - Resend OTP"""
     permission_classes = [AllowAny]
     
     def post(self, request):
-        email = request.data.get('email', '')
-        
+        email = request.data.get('email', '').strip().lower()
         if not email:
             return Response({'error': 'Email required'}, status=status.HTTP_400_BAD_REQUEST)
         
         try:
-            user = User.objects.get(email=email)
-            otp = ''.join([str(secrets.randbelow(10)) for _ in range(6)])
+            user = User.objects.get(email=email, is_active=True)
+            otp = OTPService.generate_otp()
             user.password_reset_otp = otp
-            user.save()
-            
-            send_mail(
-                'Password Reset OTP',
-                f'Your OTP is: {otp}',
-                settings.DEFAULT_FROM_EMAIL,
-                [email],
-                fail_silently=True,
-            )
-            
-            return Response({'message': 'OTP sent to email'})
+            user.otp_created_at = timezone.now()
+            user.otp_attempts = 0
+            user.save(update_fields=['password_reset_otp', 'otp_created_at', 'otp_attempts'])
+            OTPService.send_password_reset_otp(user, otp)
         except User.DoesNotExist:
-            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+            pass
+        
+        return Response({'message': 'OTP resent'}, status=status.HTTP_200_OK)
 
 
-class RequestLoginOTPView(APIView):
-    """
-    POST /api/auth/request-login-otp/
-    Request OTP for passwordless login
-    """
+class ResetPasswordView(APIView):
+    """POST /api/auth/reset-password/ - Reset password"""
     permission_classes = [AllowAny]
     
     def post(self, request):
-        email = request.data.get('email', '')
+        email = request.data.get('email', '').strip().lower()
+        otp = request.data.get('otp', '').strip()
+        password = request.data.get('password', '')
         
-        if not email:
-            return Response({'error': 'Email required'}, status=status.HTTP_400_BAD_REQUEST)
+        if not email or not otp or not password:
+            return Response({'error': 'Email, OTP, password required'}, status=status.HTTP_400_BAD_REQUEST)
+        if len(password) < 6:
+            return Response({'error': 'Password min 6 chars'}, status=status.HTTP_400_BAD_REQUEST)
         
         try:
-            user = User.objects.get(email=email)
-            otp = ''.join([str(secrets.randbelow(10)) for _ in range(6)])
-            user.login_otp = otp
+            user = User.objects.get(email=email, is_active=True)
+            is_valid, msg = OTPService.verify_otp(user, otp, 'password_reset')
+            if not is_valid:
+                return Response({'error': msg}, status=status.HTTP_400_BAD_REQUEST)
+            
+            user.set_password(password)
+            OTPService.clear_otp(user, 'password_reset')
             user.save()
-            
-            send_mail(
-                'Login OTP',
-                f'Your login OTP is: {otp}. Valid for 10 minutes.',
-                settings.DEFAULT_FROM_EMAIL,
-                [email],
-                fail_silently=True,
-            )
-            
-            return Response({'message': 'OTP sent to email', 'email': email})
-        except User.DoesNotExist:
-            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
-
-
-class VerifyEmailOTPView(APIView):
-    """
-    POST /api/auth/verify-email-otp/
-    Verify email using OTP
-    """
-    permission_classes = [AllowAny]
-    
-    def post(self, request):
-        email = request.data.get('email', '')
-        otp = request.data.get('otp', '')
-        
-        if not email or not otp:
-            return Response({'error': 'Email and OTP required'}, status=status.HTTP_400_BAD_REQUEST)
-        
-        try:
-            user = User.objects.get(email=email)
-            if hasattr(user, 'login_otp') and user.login_otp == otp:
-                from rest_framework_simplejwt.tokens import RefreshToken
-                refresh = RefreshToken.for_user(user)
-                return Response({
-                    'message': 'Email verified successfully',
-                    'access': str(refresh.access_token),
-                    'refresh': str(refresh),
-                    'user': {
-                        'user_id': str(user.user_id),
-                        'email': user.email,
-                        'tenant_id': str(user.tenant_id),
-                    }
-                })
-            return Response({'error': 'Invalid OTP'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'message': 'Password reset'}, status=status.HTTP_200_OK)
         except User.DoesNotExist:
             return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)

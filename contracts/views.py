@@ -57,9 +57,21 @@ from .services import (
     ContractGenerator, RuleEngine,
     SignNowAPIService, SignNowAuthService
 )
+from .clause_seed import ensure_tenant_clause_library_seeded
+from .constraint_library import CONSTRAINT_LIBRARY
 from authentication.r2_service import R2StorageService
 
 logger = logging.getLogger(__name__)
+
+
+_signnow_api_service = None
+
+
+def get_signnow_api_service() -> SignNowAPIService:
+    global _signnow_api_service
+    if _signnow_api_service is None:
+        _signnow_api_service = SignNowAPIService()
+    return _signnow_api_service
 
 
 # ============================================================================
@@ -357,17 +369,52 @@ class ClauseViewSet(viewsets.ModelViewSet):
     
     def get_queryset(self):
         tenant_id = self.request.user.tenant_id
+        contract_type = self.request.query_params.get('contract_type')
+
+        # Ensure each tenant has a substantial clause library (30-50+)
+        # before listing/filtering.
+        ensure_tenant_clause_library_seeded(
+            tenant_id=tenant_id,
+            user_id=self.request.user.user_id,
+            contract_type=contract_type,
+            min_count=50,
+        )
+
         queryset = Clause.objects.filter(
             tenant_id=tenant_id,
             status='published'
         )
         
         # Filter by contract type if provided
-        contract_type = self.request.query_params.get('contract_type')
         if contract_type:
             queryset = queryset.filter(contract_type=contract_type)
         
         return queryset
+
+    @action(detail=False, methods=['get'], url_path='constraints-library')
+    def constraints_library(self, request):
+        """GET /clauses/constraints-library/
+
+        Returns a built-in set of constraint templates that the UI can present as
+        pick-and-add items.
+        """
+
+        q = (request.query_params.get('q') or '').strip().lower()
+        category = (request.query_params.get('category') or '').strip().lower()
+
+        items = CONSTRAINT_LIBRARY
+        if category:
+            items = [x for x in items if str(x.get('category') or '').strip().lower() == category]
+        if q:
+            items = [
+                x
+                for x in items
+                if q in str(x.get('label') or '').lower()
+                or q in str(x.get('key') or '').lower()
+                or q in str(x.get('category') or '').lower()
+            ]
+
+        return Response({'success': True, 'count': len(items), 'results': items}, status=status.HTTP_200_OK)
     
     def perform_create(self, serializer):
         """Set tenant_id and created_by when creating a clause"""
@@ -3450,6 +3497,7 @@ def upload_contract(request):
     }
     """
     try:
+        api_service = get_signnow_api_service()
         contract_id = request.data.get("contract_id")
         if not contract_id:
             return Response(
@@ -3568,6 +3616,7 @@ def send_for_signature(request):
     }
     """
     try:
+        api_service = get_signnow_api_service()
         contract_id = request.data.get("contract_id")
         signers_data = request.data.get("signers", [])
         signing_order = request.data.get("signing_order", "sequential")
@@ -3673,6 +3722,7 @@ def get_signing_url(request, contract_id):
     }
     """
     try:
+        api_service = get_signnow_api_service()
         signer_email = request.query_params.get("signer_email")
         if not signer_email:
             return Response(
@@ -3747,6 +3797,7 @@ def check_status(request, contract_id):
     }
     """
     try:
+        api_service = get_signnow_api_service()
         # Get e-signature contract
         esig = get_object_or_404(ESignatureContract, contract_id=contract_id)
         
@@ -3855,6 +3906,7 @@ def get_executed_document(request, contract_id):
     }
     """
     try:
+        api_service = get_signnow_api_service()
         # Get e-signature contract
         esig = get_object_or_404(ESignatureContract, id=contract_id)
         
@@ -3961,17 +4013,44 @@ class ClauseViewSet(viewsets.ModelViewSet):
     
     def get_queryset(self):
         tenant_id = self.request.user.tenant_id
+        contract_type = self.request.query_params.get('contract_type')
+
+        ensure_tenant_clause_library_seeded(
+            tenant_id=tenant_id,
+            user_id=self.request.user.user_id,
+            contract_type=contract_type,
+            min_count=50,
+        )
+
         queryset = Clause.objects.filter(
             tenant_id=tenant_id,
             status='published'
         )
         
         # Filter by contract type if provided
-        contract_type = self.request.query_params.get('contract_type')
         if contract_type:
             queryset = queryset.filter(contract_type=contract_type)
         
         return queryset
+
+    @action(detail=False, methods=['get'], url_path='constraints-library')
+    def constraints_library(self, request):
+        q = (request.query_params.get('q') or '').strip().lower()
+        category = (request.query_params.get('category') or '').strip().lower()
+
+        items = CONSTRAINT_LIBRARY
+        if category:
+            items = [x for x in items if str(x.get('category') or '').strip().lower() == category]
+        if q:
+            items = [
+                x
+                for x in items
+                if q in str(x.get('label') or '').lower()
+                or q in str(x.get('key') or '').lower()
+                or q in str(x.get('category') or '').lower()
+            ]
+
+        return Response({'success': True, 'count': len(items), 'results': items}, status=status.HTTP_200_OK)
     
     def perform_create(self, serializer):
         """Set tenant_id and created_by when creating a clause"""
@@ -6328,6 +6407,7 @@ def upload_contract(request):
     }
     """
     try:
+        api_service = get_signnow_api_service()
         contract_id = request.data.get("contract_id")
         if not contract_id:
             return Response(
@@ -6446,6 +6526,7 @@ def send_for_signature(request):
     }
     """
     try:
+        api_service = get_signnow_api_service()
         contract_id = request.data.get("contract_id")
         signers_data = request.data.get("signers", [])
         signing_order = request.data.get("signing_order", "sequential")
@@ -6551,6 +6632,7 @@ def get_signing_url(request, contract_id):
     }
     """
     try:
+        api_service = get_signnow_api_service()
         signer_email = request.query_params.get("signer_email")
         if not signer_email:
             return Response(
@@ -6625,6 +6707,7 @@ def check_status(request, contract_id):
     }
     """
     try:
+        api_service = get_signnow_api_service()
         # Get e-signature contract
         esig = get_object_or_404(ESignatureContract, contract_id=contract_id)
         
@@ -6733,6 +6816,7 @@ def get_executed_document(request, contract_id):
     }
     """
     try:
+        api_service = get_signnow_api_service()
         # Get e-signature contract
         esig = get_object_or_404(ESignatureContract, id=contract_id)
         

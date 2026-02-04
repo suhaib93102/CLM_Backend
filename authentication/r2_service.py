@@ -84,6 +84,55 @@ class R2StorageService:
         except ClientError as e:
             raise Exception(f"Failed to upload file to R2: {str(e)}")
 
+    def put_bytes(
+        self,
+        key: str,
+        body: bytes,
+        *,
+        content_type: str = 'application/octet-stream',
+        metadata: Optional[Dict[str, str]] = None,
+    ) -> str:
+        """Upload raw bytes to a specific R2 key.
+
+        This is used for deterministic objects (e.g. editor snapshots) where callers
+        control the full key path.
+        """
+        if not key or not str(key).strip():
+            raise Exception('R2 key is required')
+        if body is None:
+            body = b''
+
+        md = {k: str(v) for k, v in (metadata or {}).items() if k and v is not None}
+
+        try:
+            self.client.put_object(
+                Bucket=self.bucket_name,
+                Key=str(key),
+                Body=body,
+                ContentType=content_type or 'application/octet-stream',
+                Metadata=md,
+            )
+            return str(key)
+        except ClientError as e:
+            raise Exception(f"Failed to upload bytes to R2: {str(e)}")
+
+    def put_text(
+        self,
+        key: str,
+        text: str,
+        *,
+        content_type: str = 'text/plain; charset=utf-8',
+        metadata: Optional[Dict[str, str]] = None,
+        encoding: str = 'utf-8',
+    ) -> str:
+        """Upload text content to a specific R2 key."""
+        return self.put_bytes(
+            key,
+            (text or '').encode(encoding, errors='replace'),
+            content_type=content_type,
+            metadata=metadata,
+        )
+
     @staticmethod
     def sanitize_filename(filename: str) -> str:
         name = (filename or '').strip()

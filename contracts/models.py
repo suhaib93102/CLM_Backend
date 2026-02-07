@@ -688,6 +688,8 @@ class FirmaSigningAuditLog(models.Model):
         ('invite_sent', 'Invitation Sent'),
         ('status_checked', 'Status Checked'),
         ('document_downloaded', 'Document Downloaded'),
+        ('webhook', 'Webhook Event'),
+        ('reminder', 'Reminder'),
         ('error', 'Error'),
     ]
 

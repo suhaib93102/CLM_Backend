@@ -1441,6 +1441,84 @@ def firma_get_signing_request_reminders(request, contract_id: str):
        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def firma_get_activity_log(request, contract_id: str):
+   record = get_object_or_404(FirmaSignatureContract, contract_id=contract_id)
+   limit = int(request.query_params.get('limit') or 50)
+   limit = max(1, min(limit, 200))
+
+   items = []
+   try:
+       qs = record.audit_logs.select_related('signer').all()[:limit]
+       for row in qs:
+           items.append(
+               {
+                   'id': str(row.id),
+                   'event': row.event,
+                   'message': row.message,
+                   'old_status': row.old_status,
+                   'new_status': row.new_status,
+                   'signer': (
+                       {
+                           'email': row.signer.email,
+                           'name': row.signer.name,
+                       }
+                       if row.signer_id
+                       else None
+                   ),
+                   'created_at': row.created_at.isoformat(),
+               }
+           )
+   except Exception as e:
+       logger.error('Firma activity log failed: %s', e, exc_info=True)
+       return Response({'error': 'Failed to load activity log'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+   return Response({'success': True, 'contract_id': str(contract_id), 'results': items}, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def firma_resend_invites(request, contract_id: str):
+   """Re-send invites for an existing signing request.
+
+   This does NOT rewrite recipients/fields; it simply triggers vendor send again (idempotent).
+   """
+   record = get_object_or_404(FirmaSignatureContract, contract_id=contract_id)
+   try:
+       # Don't allow resending if already completed.
+       if record.status == 'completed':
+           return Response({'error': 'Signing request already completed'}, status=status.HTTP_400_BAD_REQUEST)
+
+       service = _get_firma_service()
+       signers = [{'email': s.email, 'name': s.name} for s in record.signers.all()]
+       # Best-effort send.
+       send_res = service.create_invite(record.firma_document_id, signers, signing_order=record.signing_order)
+       old = record.status
+       if record.status == 'draft':
+           record.status = 'sent'
+           record.sent_at = timezone.now()
+           record.save(update_fields=['status', 'sent_at', 'updated_at'])
+
+       FirmaSigningAuditLog.objects.create(
+           firma_signature_contract=record,
+           event='invite_sent',
+           message='Invites resent',
+           old_status=old,
+           new_status=record.status,
+           firma_response=send_res,
+       )
+
+       _firma_stream_publish(str(record.contract_id), {'type': 'invite_resent', 'payload': send_res, 'ts': int(time.time())})
+
+       return Response({'success': True, 'contract_id': str(contract_id), 'status': record.status}, status=status.HTTP_200_OK)
+   except FirmaApiError as e:
+       return Response({'error': str(e), 'details': e.response_text}, status=status.HTTP_502_BAD_GATEWAY)
+   except Exception as e:
+       logger.error('Firma resend invites failed: %s', e, exc_info=True)
+       return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
 def firma_webhooks(request):

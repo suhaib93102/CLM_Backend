@@ -13,26 +13,13 @@
         },
         "required": true,
         "recipient_index": 0
-      },
-      {
-        "label": "Signature 2",
-        "type": "signature",
-        "page_number": 1,
-        "position": {
-          "x": 14.399908879063098,
-          "y": 46.28262766354897,
-          "width": 35.94646271510516,
-          "height": 3.5450516986706058
-        },
-        "required": true,
-        "recipient_index": 1
       }
     ],
     "auto_stack": false,
     "source": "drag_drop_ui",
     "stack_spacing": 12
   },
-  "signature_fields_updated_at": "2026-02-06T18:31:22.165888+00:00",
+  "signature_fields_updated_at": "2026-02-07T12:56:51.334220+00:00",
   "signature_fields_updated_by_id": "39f3f02e-ceb3-4f36-a057-3af7c6c9c395",
   "signature_fields_updated_by_email": "suhaib96886@gmail.com"
 }

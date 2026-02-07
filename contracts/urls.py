@@ -81,6 +81,8 @@ urlpatterns = [
     path('firma/esign/executed/<str:contract_id>/', firma_views.firma_get_executed_document, name='firma_get_executed_document'),
     path('firma/esign/details/<str:contract_id>/', firma_views.firma_get_signing_request_details, name='firma_get_signing_request_details'),
     path('firma/esign/reminders/<str:contract_id>/', firma_views.firma_get_signing_request_reminders, name='firma_get_signing_request_reminders'),
+    path('firma/esign/activity/<str:contract_id>/', firma_views.firma_get_activity_log, name='firma_get_activity_log'),
+    path('firma/esign/resend/<str:contract_id>/', firma_views.firma_resend_invites, name='firma_resend_invites'),
 
     path('firma/webhooks/', firma_views.firma_webhooks, name='firma_webhooks'),
     path('firma/webhooks/<str:webhook_id>/', firma_views.firma_webhook_detail, name='firma_webhook_detail'),
